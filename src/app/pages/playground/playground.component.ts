@@ -2,13 +2,13 @@ import { Component, ViewEncapsulation, OnInit, ViewChild } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { PanelMenuModule } from 'primeng/panelmenu';
 import { MenuItem } from 'primeng/api';
-import { BrowserModule } from '@angular/platform-browser';
+import { CardModule } from 'primeng/card';
+import { MenubarModule } from 'primeng/menubar';
 import { ApiService } from '../../core/services/api/app.api.service';
-
 @Component({
   selector: 'app-playground',
   standalone: true,
-  imports: [RouterOutlet, PanelMenuModule],
+  imports: [RouterOutlet, PanelMenuModule, MenubarModule, CardModule],
   templateUrl: './playground.component.html',
   encapsulation: ViewEncapsulation.None,
   styleUrl: './playground.component.css'
