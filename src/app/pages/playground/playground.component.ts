@@ -16,10 +16,17 @@ import { ApiService } from '../../core/services/api/app.api.service';
 export class PlaygroundComponent implements OnInit {
   componentsList: any;
   items: MenuItem[];
+  nodes: MenuItem[];
+
+  private staticdata_algorithms: any;
+  private timeseries_algorithms: any;
 
   constructor(private _apiservice: ApiService) { }
 
   ngOnInit() {
+    this.staticdata_algorithms = null
+    this.getAlgorithms('static_data');
+    this.getAlgorithms('time_series');
     this.getData();
     this.items = [
       {
@@ -140,6 +147,80 @@ export class PlaygroundComponent implements OnInit {
         ]
       }
     ];
+    this.nodes = [
+      {
+        label: 'Images',
+        icon: 'pi pi-fw pi-image',
+        items: [
+          {
+            label: 'Algorithms',
+            icon: 'pi pi-fw pi-calculator',
+            items: [
+
+            ]
+          },
+          {
+            label: 'Preprocessing',
+            icon: 'pi pi-fw pi-lock'
+            //icon: 'pi pi-fw pi-file-edit'
+          },
+          {
+            label: 'Visualization',
+            icon: 'pi pi-fw pi-lock'
+            //icon: 'pi pi-fw pi-external-link'
+          }
+        ]
+      },
+      {
+        label: 'Static Data',
+        icon: 'pi pi-fw pi-database',
+        items: [
+          {
+            label: 'Algorithms',
+            icon: 'pi pi-fw pi-calculator',
+            items: this.staticdata_algorithms
+          },
+          {
+            label: 'Preprocessing',
+            icon: 'pi pi-fw pi-lock'
+            //icon: 'pi pi-fw pi-file-edit'
+          },
+          {
+            label: 'Visualization',
+            icon: 'pi pi-fw pi-lock'
+            //icon: 'pi pi-fw pi-external-link'
+          },
+          {
+            separator: true
+          },
+          {
+            label: 'Misc.',
+            icon: 'pi pi-fw pi-align-justify'
+          }
+        ]
+      },
+      {
+        label: 'Time Series',
+        icon: 'pi pi-fw pi-clock',
+        items: [
+          {
+            label: 'Algorithms',
+            icon: 'pi pi-fw pi-calculator',
+            items: this.timeseries_algorithms,
+          },
+          {
+            label: 'Preprocessing',
+            icon: 'pi pi-fw pi-lock'
+            //icon: 'pi pi-fw pi-file-edit'
+          },
+          {
+            label: 'Visualization',
+            icon: 'pi pi-fw pi-lock'
+            //icon: 'pi pi-fw pi-external-link'
+          }
+        ]
+      }
+    ];
   }
 
   getData() {
@@ -148,6 +229,41 @@ export class PlaygroundComponent implements OnInit {
         (response) => {
           this.componentsList = response;
           console.log(this.componentsList)
+        },
+        (error) => {
+          console.error('Error fetching data:', error);
+        }
+      );
+  }
+
+  getAlgorithms(_category: string) {
+    this._apiservice.getAlgorithms(_category)
+      .subscribe(
+        (response) => {
+          if(_category == 'static_data'){
+            this.staticdata_algorithms = response
+            // Map the components array to the desired format
+            this.staticdata_algorithms = this.staticdata_algorithms.map((element: string) => {
+              return {
+                label: element.charAt(0).toUpperCase() + element.slice(1), // Capitalize first letter
+                icon: 'pi pi-fw pi-calculator', // Assuming a default icon
+                items: [] // No dynamic items initially
+              };
+            });
+            console.log(this.staticdata_algorithms)
+          }
+          else if(_category == 'time_series'){
+            this.timeseries_algorithms = response
+            // Map the components array to the desired format
+            this.timeseries_algorithms = this.timeseries_algorithms.map((element: string) => {
+              return {
+                label: element.charAt(0).toUpperCase() + element.slice(1), // Capitalize first letter
+                icon: 'pi pi-fw pi-calculator', // Assuming a default icon
+                items: [] // No dynamic items initially
+              };
+            });
+            console.log(this.timeseries_algorithms)
+          }
         },
         (error) => {
           console.error('Error fetching data:', error);
