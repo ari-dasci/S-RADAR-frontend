@@ -1,0 +1,37 @@
+<div class="modal-header">
+  <!-- <div class="modal-title" id="modal-basic-title">{{ titulo }}</div> -->
+  <button type="button" class="close" aria-label="Close" (click)="cancelar()">
+    <i class="far fa-times-circle"></i>
+  </button>
+</div>
+<div class="modal-body p-0">
+  <div class="chat">
+    <div class="chat-container">
+      <div id="call" class="user-bar">
+        <div class="avatar">
+          <img src="https://www.codewithfaraz.com/InstaPic.png" alt="Avatar">
+        </div>
+        <div class="name">
+          <span id="name"></span>
+          <span class="status"></span>
+        </div>
+      </div>
+      <div class="conversation">
+        <div class="conversation-container">
+          <span id="ap">
+          </span>
+        </div>
+        <form id="form" class="conversation-compose">
+          <div class="emoji">
+          </div>
+          <input id="val" class="input-msg" name="input" placeholder="Type a message" autocomplete="off" autofocus>
+          <span id="speak"></span>
+          <span class="send">
+            <div class="circle">
+            </div>
+          </span>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

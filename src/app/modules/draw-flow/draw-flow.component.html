@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR"  data-bs-theme="light">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Drawflow | Simple Flow program libray</title>
+  <meta name="description"
+    content="Simple library for flow programming. Drawflow allows you to create data flows easily and quickly.">
+</head>
+
+<body>
+  <!-- <script src="https://cdn.jsdelivr.net/gh/jerosoler/Drawflow/dist/drawflow.min.js"></script> -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css"
+    integrity="sha256-h20CPZ0QyXlBuAw7A+KluUYx/3pK+c7lYEpqLTlxjYQ=" crossorigin="anonymous" />
+
+  <header>
+    <h2>WFLOW</h2>
+    <!-- <div class="github-link"><a href="https://github.com/jerosoler/Drawflow" target="_blank"> <i class="fas fa-save fa-3x"></i></a></div> -->
+    <!-- <div class="them-edit-link"><a href="https://jerosoler.github.io/drawflow-theme-generator/" target="_blank">🎨</a></div> -->
+
+    <!-- <button type="button" class="them-edit-link btn btn-primary" (click)="teste()">Primary</button> -->
+  </header>
+  <div class="wrapper">
+    <div class="col">
+
+      <!-- <span class="material-icons">pie_chart</span> --Filled
+      <span class="material-icons-outlined">pie_chart</span> --Outlined
+      <span class="material-icons-round">pie_chart</span> Round 
+      <span class="material-icons-sharp">pie_chart</span> -- Sharp 
+      <span class="material-icons-two-tone">pie_chart</span> --Two Tone  -->
+      <div class="drag-drawflow drag-bars" [attr.data-node]="toggleableItem ? 'expanded' : ''" (click)="toggleableItem = !toggleableItem">
+        <i class="fa fa-bars" aria-hidden="true"></i>
+        <span> Components</span>
+      </div>
+      <div *ngIf="toggleableItem">
+        <div *ngFor="let name of components | keyvalue">
+          <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-node]="name.value">
+            <i [ngClass]="getIconClass(name.value)"></i><span> {{name.key}}</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="col-right">
+      <div class="menu">
+        <ul>
+          <li onclick="editor.changeModule('Home'); changeModule(event);" class="selected">Draw</li>
+        </ul>
+
+        <!-- <div class="theme-switcher">
+          <label class="swtich">
+            <input
+              type="checkbox"
+              [checked]="isLightTheme"
+              (change)="onThemeSwitchChange()"
+            />
+          </label>
+        </div> -->
+        
+      </div>
+      <div id="drawflow" (drop)="drop($event)" (dragover)="allowDrop($event)">
+
+        <div class="btn-export" (click)="export()">Export</div>
+        <div class="btn-import" (click)="import()">Import</div>
+        <div class="btn-test" (click)="runTest()" type="button"> <i class="fa fa-play fa-xs"></i>
+          Test</div>
+
+        <div class="btn-lock" [ngClass]="locked ? 'locked' : ''">
+          <i (click)="changeMode()" class="fas fa-lock-open" [ngStyle]="{ display: locked ? 'none' : 'block' }"></i>
+          <i (click)="changeMode()" class="fas fa-lock" [ngStyle]="{ display: locked ? 'block' : 'none' }"></i>
+        </div>
+
+        <div class="bar-zoom">
+          <i class="fas fa-search-minus" (click)="onZoomOut()"></i>
+          <i class="fas fa-search" (click)="onZoomReset()"></i>
+          <i class="fas fa-search-plus" (click)="onZoomIn()"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
