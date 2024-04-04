@@ -1,10 +1,16 @@
-import { Component, ViewEncapsulation, OnInit, ViewChild } from '@angular/core';
+import { Component, ViewEncapsulation, OnInit, ViewChild, Inject, ElementRef, PLATFORM_ID } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { PanelMenuModule } from 'primeng/panelmenu';
 import { MenuItem } from 'primeng/api';
 import { CardModule } from 'primeng/card';
 import { MenubarModule } from 'primeng/menubar';
 import { ApiService } from '../../core/services/api/app.api.service';
+import drawflow from 'drawflow';
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { inject } from '@angular/core';
+import Drawflow from 'drawflow';
+
+
 @Component({
   selector: 'app-playground',
   standalone: true,
@@ -21,10 +27,36 @@ export class PlaygroundComponent implements OnInit {
   private staticdata_algorithms: any;
   private timeseries_algorithms: any;
 
-  constructor(private _apiservice: ApiService) { }
+  editor: Drawflow;
+  
+  constructor(private _apiservice: ApiService, private hostElRef: ElementRef, @Inject(PLATFORM_ID) private platformId: Object,
+  @Inject(DOCUMENT) private document: Document) {
+  }
+
+  private initDrawFlow(el: HTMLElement): void {
+    try {
+      if (!!el) {
+        this.editor = new Drawflow(el);
+        this.editor.reroute = true;
+        this.editor.editor_mode = 'edit';
+       // this.editor.drawflow = ""
+        this.editor.start();
+      } else {
+        console.error('Drawflow host element does not exist');
+      }
+
+    } catch (exception) {
+      console.error('Unable to start Drawflow', exception);
+    }
+  }
 
   ngOnInit() {
-    this.staticdata_algorithms = null
+    if (isPlatformBrowser(this.platformId) && !!this.hostElRef?.nativeElement) {
+      const { nativeElement } = this.hostElRef;
+      this.initDrawFlow(nativeElement);
+    } else {
+      console.warn('Drawflow initialization skipped because it is not running in the browser environment.');
+    }
     this.getAlgorithms('static_data');
     this.getAlgorithms('time_series');
     this.getData();
@@ -228,7 +260,7 @@ export class PlaygroundComponent implements OnInit {
       .subscribe(
         (response) => {
           this.componentsList = response;
-          console.log(this.componentsList)
+          //console.log(this.componentsList)
         },
         (error) => {
           console.error('Error fetching data:', error);
@@ -236,33 +268,56 @@ export class PlaygroundComponent implements OnInit {
       );
   }
 
+  getLibraryAlgorithms(_category: string, _library: string) {
+    let libraryAlgorithms: any
+    this._apiservice.getLibraryAlgorithms(_category, _library)
+      .subscribe(
+        (response) => {
+          libraryAlgorithms = response
+          // Map the components array to the desired format
+          libraryAlgorithms = libraryAlgorithms.map((element: string) => {
+            return {
+              label: element.charAt(0).toUpperCase() + element.slice(1), // Capitalize first letter
+              icon: 'pi pi-fw pi-calculator', // Assuming a default icon
+              items: [] // No dynamic items initially
+            };
+          });
+          //console.log(libraryAlgorithms)
+        },
+        (error) => {
+          console.error('Error fetching data:', error);
+        }
+      );
+    return libraryAlgorithms
+  }
+
   getAlgorithms(_category: string) {
     this._apiservice.getAlgorithms(_category)
       .subscribe(
         (response) => {
-          if(_category == 'static_data'){
+          if (_category == 'static_data') {
             this.staticdata_algorithms = response
             // Map the components array to the desired format
             this.staticdata_algorithms = this.staticdata_algorithms.map((element: string) => {
               return {
                 label: element.charAt(0).toUpperCase() + element.slice(1), // Capitalize first letter
                 icon: 'pi pi-fw pi-calculator', // Assuming a default icon
-                items: [] // No dynamic items initially
+                items: this.getLibraryAlgorithms(_category, element)
               };
             });
-            console.log(this.staticdata_algorithms)
+            //console.log(this.staticdata_algorithms)
           }
-          else if(_category == 'time_series'){
+          if (_category == 'time_series') {
             this.timeseries_algorithms = response
             // Map the components array to the desired format
             this.timeseries_algorithms = this.timeseries_algorithms.map((element: string) => {
               return {
                 label: element.charAt(0).toUpperCase() + element.slice(1), // Capitalize first letter
                 icon: 'pi pi-fw pi-calculator', // Assuming a default icon
-                items: [] // No dynamic items initially
+                items: this.getLibraryAlgorithms(_category, element)
               };
             });
-            console.log(this.timeseries_algorithms)
+            //console.log(this.timeseries_algorithms)
           }
         },
         (error) => {
