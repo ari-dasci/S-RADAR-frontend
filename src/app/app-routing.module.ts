@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { DrawFlowComponent } from './modules/draw-flow/draw-flow.component';
+import { PlaygroundComponent } from './pages/playground/playground.component'
 
 const routes: Routes = [
   {
     path: '',
-    component: DrawFlowComponent
+    component: PlaygroundComponent
 
   }
 ];

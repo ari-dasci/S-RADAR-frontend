@@ -7,16 +7,23 @@ import { SharedDataService } from '../../shared/providers/sharedData.service';
 import { FlowService } from '../../shared/providers/flow.service';
 import { WbotComponent } from '../../shared/components/modals/wbot/wbot.component';
 import { trigger, transition, style, animate } from '@angular/animations';
-import { ApiService } from '../../api/app.api.service';
+import { ApiService } from '../../core/services/api/app.api.service';
+import { Observable } from 'rxjs';
 
 @Component({
-  selector: 'app-draw-flow',
-  templateUrl: './draw-flow.component.html',
-  styleUrls: ['./draw-flow.component.css'],
+  selector: 'playground',
+  templateUrl: './playground.component.html',
+  styleUrls: ['./playground.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DrawFlowComponent implements OnInit {
+export class PlaygroundComponent implements OnInit {
 
+  //Model variables
+  staticdata_algorithms: { label: string, icon: string, items: string[] , expanded: boolean}[] = [];
+  timeseries_algorithms: { label: string, icon: string, items: any }[] = [];
+
+
+  //Drawflow variables
   @Input()
   nodes: any[];
   @Input()
@@ -30,7 +37,9 @@ export class DrawFlowComponent implements OnInit {
   @Input()
   otherDetails: any;
 
-  toggleableItem: boolean = false;
+  toggleableImages: boolean = false;
+  toggleableStatic: boolean = false;
+  toggleableTime: boolean = false;
   editor!: any;
   editDivHtml: HTMLElement;
   editButtonShown: boolean = false;
@@ -69,6 +78,8 @@ export class DrawFlowComponent implements OnInit {
 
   ngOnInit() {
     this.getData();
+    this.getAlgorithms('static_data');
+    this.getAlgorithms('time_series');
   }
 
   ngAfterViewInit(): void {
@@ -84,6 +95,8 @@ export class DrawFlowComponent implements OnInit {
     this.editor.addNodeOutput(this.selectedNodeId.slice(5));
   }
 
+
+  // ******************************************** MODEL OPERATIONS *****************************************************************//
   getData() {
     this._apiservice.getdata()
       .subscribe(
@@ -95,6 +108,59 @@ export class DrawFlowComponent implements OnInit {
           console.error('Error fetching data:', error);
         }
       );
+  }
+
+  async getLibraryAlgorithms(_category: string, _library: string): Promise<any> {
+    try {
+      const libraryAlgorithms = await this._apiservice.getLibraryAlgorithms(_category, _library).toPromise();
+      return libraryAlgorithms;
+    } catch (error) {
+      console.error('Error fetching library algorithms:', error);
+      throw error; // Rethrow the error to handle it in the caller function
+    }
+  }
+
+  getAlgorithms(_category: string) {
+    this._apiservice.getAlgorithms(_category)
+      .subscribe(
+        (response) => {
+          if (_category == 'static_data') {
+            const algorithms: any = response
+            // Map the components array to the desired format
+            this.staticdata_algorithms = algorithms.map((element: string) => {
+              return {
+                label: element.charAt(0).toUpperCase() + element.slice(1), // Capitalize first letter
+                icon: 'pi pi-fw pi-calculator', // Assuming a default icon
+                items: this.getLibraryAlgorithms(_category, element),
+                expanded: false
+              };
+            });
+            console.log(this.staticdata_algorithms)
+          }
+          if (_category == 'time_series') {
+            const algorithms: any = response
+            // Map the components array to the desired format
+            this.timeseries_algorithms = algorithms.map((element: string) => {
+              return {
+                label: element.charAt(0).toUpperCase() + element.slice(1), // Capitalize first letter
+                icon: 'pi pi-fw pi-calculator', // Assuming a default icon
+                items: this.getLibraryAlgorithms(_category, element),
+                expanded: false
+              };
+            });
+            //console.log(this.timeseries_algorithms)
+          }
+        },
+        (error) => {
+          console.error('Error fetching data:', error);
+        }
+      );
+  }
+
+  // ******************************************************************************************************************************//
+
+  toggleItem(algorithm: any) {
+    algorithm.expanded = !algorithm.expanded; // Toggle the expanded property
   }
 
   teste() {

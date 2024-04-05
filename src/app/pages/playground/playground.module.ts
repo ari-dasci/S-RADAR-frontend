@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DrawFlowComponent } from './draw-flow.component';
+import { PlaygroundComponent } from './playground.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { SharedModule } from '../../shared/shared.module';
 
@@ -10,6 +10,6 @@ import { SharedModule } from '../../shared/shared.module';
     BrowserModule,
     SharedModule
   ],
-  declarations: [DrawFlowComponent]
+  declarations: [PlaygroundComponent]
 })
-export class DrawFlowModule { }
+export class PlaygroundModule { }

@@ -6,7 +6,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SharedModule } from './shared/shared.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { DrawFlowModule } from './modules/draw-flow/draw-flow.module';
+import { PlaygroundModule } from './pages/playground/playground.module';
 import { ConfigComponentsModule } from './shared/components/modals/config-components/config-components.module';
 
 @NgModule({
@@ -17,7 +17,7 @@ import { ConfigComponentsModule } from './shared/components/modals/config-compon
     BrowserModule, 
     AppRoutingModule,
     SharedModule.forRoot(),
-    DrawFlowModule,
+    PlaygroundModule,
     ConfigComponentsModule,
     BrowserAnimationsModule
   ],
