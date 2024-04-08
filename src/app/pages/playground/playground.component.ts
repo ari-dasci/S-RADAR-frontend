@@ -19,6 +19,7 @@ import { Observable } from 'rxjs';
 export class PlaygroundComponent implements OnInit {
 
   //Model variables
+
   staticdata_algorithms: { label: string, icon: string, items: any, expanded: boolean }[] = [];
   timeseries_algorithms: { label: string, icon: string, items: any, expanded: boolean }[] = [];
 
@@ -447,7 +448,7 @@ export class PlaygroundComponent implements OnInit {
         break;
       default:
         if (name) {
-          html = `<div class="title-box"><i class="${this.getIconClass(name as TypeComponent)}"></i> <span>${keyFromName}</span></div>`;
+          html = `<div class="title-box"><i class="${this.getIconClass(name as TypeComponent)}"></i> <span>${name}</span></div>`;
           this.editor.addNode(name, 1, 1, pos_x, pos_y, name, {}, html);
         }
     }
