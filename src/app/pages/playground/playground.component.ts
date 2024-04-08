@@ -19,8 +19,8 @@ import { Observable } from 'rxjs';
 export class PlaygroundComponent implements OnInit {
 
   //Model variables
-  staticdata_algorithms: { label: string, icon: string, items: string[] , expanded: boolean}[] = [];
-  timeseries_algorithms: { label: string, icon: string, items: any }[] = [];
+  staticdata_algorithms: { label: string, icon: string, items: any, expanded: boolean }[] = [];
+  timeseries_algorithms: { label: string, icon: string, items: any, expanded: boolean }[] = [];
 
 
   //Drawflow variables
@@ -77,7 +77,7 @@ export class PlaygroundComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getData();
+    //this.getData();
     this.getAlgorithms('static_data');
     this.getAlgorithms('time_series');
   }
@@ -102,7 +102,7 @@ export class PlaygroundComponent implements OnInit {
       .subscribe(
         (response) => {
           const componentsList = response;
-          console.log(componentsList)
+          //console.log(componentsList)
         },
         (error) => {
           console.error('Error fetching data:', error);
@@ -110,10 +110,11 @@ export class PlaygroundComponent implements OnInit {
       );
   }
 
-  async getLibraryAlgorithms(_category: string, _library: string): Promise<any> {
+  getLibraryAlgorithms(_category: string, _library: string) {
     try {
-      const libraryAlgorithms = await this._apiservice.getLibraryAlgorithms(_category, _library).toPromise();
-      return libraryAlgorithms;
+      const libraryAlgorithms: any = this._apiservice.getLibraryAlgorithms(_category, _library);
+      console.log(libraryAlgorithms)
+      return libraryAlgorithms
     } catch (error) {
       console.error('Error fetching library algorithms:', error);
       throw error; // Rethrow the error to handle it in the caller function
@@ -123,38 +124,64 @@ export class PlaygroundComponent implements OnInit {
   getAlgorithms(_category: string) {
     this._apiservice.getAlgorithms(_category)
       .subscribe(
-        (response) => {
+        (response: any) => {
           if (_category == 'static_data') {
-            const algorithms: any = response
-            // Map the components array to the desired format
-            this.staticdata_algorithms = algorithms.map((element: string) => {
-              return {
-                label: element.charAt(0).toUpperCase() + element.slice(1), // Capitalize first letter
-                icon: 'pi pi-fw pi-calculator', // Assuming a default icon
-                items: this.getLibraryAlgorithms(_category, element),
-                expanded: false
-              };
+            const algorithms: any[] = Object.keys(response).map(key => response[key]);
+
+            algorithms.forEach(element => {
+              this._apiservice.getLibraryAlgorithms(_category, element).subscribe(
+                (response) => {
+                  const libraryAlgorithms: any = response;
+                  const formattedAlgorithms = libraryAlgorithms.map((element: string) => element.charAt(0).toUpperCase() + element.slice(1));
+                 // console.log(formattedAlgorithms);
+
+                  this.staticdata_algorithms.push( {
+                    label: element.charAt(0).toUpperCase() + element.slice(1),
+                    icon: 'pi pi-fw pi-calculator',
+                    items: formattedAlgorithms,
+                    expanded: false,
+                  })
+
+                  return formattedAlgorithms;
+                }
+                , (error) => {
+                  console.error('Error fetching data:', error);
+                }
+              )
             });
-            console.log(this.staticdata_algorithms)
+            
           }
           if (_category == 'time_series') {
-            const algorithms: any = response
-            // Map the components array to the desired format
-            this.timeseries_algorithms = algorithms.map((element: string) => {
-              return {
-                label: element.charAt(0).toUpperCase() + element.slice(1), // Capitalize first letter
-                icon: 'pi pi-fw pi-calculator', // Assuming a default icon
-                items: this.getLibraryAlgorithms(_category, element),
-                expanded: false
-              };
+            const algorithms: any[] = Object.keys(response).map(key => response[key]);
+
+            algorithms.forEach(element => {
+              this._apiservice.getLibraryAlgorithms(_category, element).subscribe(
+                (response) => {
+                  const libraryAlgorithms: any = response;
+                  const formattedAlgorithms = libraryAlgorithms.map((element: string) => element.charAt(0).toUpperCase() + element.slice(1));
+                 // console.log(formattedAlgorithms);
+
+                  this.timeseries_algorithms.push( {
+                    label: element.charAt(0).toUpperCase() + element.slice(1),
+                    icon: 'pi pi-fw pi-calculator',
+                    items: formattedAlgorithms,
+                    expanded: false,
+                  })
+
+                  return formattedAlgorithms;
+                }
+                , (error) => {
+                  console.error('Error fetching data:', error);
+                }
+              )
             });
-            //console.log(this.timeseries_algorithms)
           }
         },
         (error) => {
           console.error('Error fetching data:', error);
         }
       );
+      
   }
 
   // ******************************************************************************************************************************//
@@ -366,7 +393,7 @@ export class PlaygroundComponent implements OnInit {
     let html = '';
 
     // this.editor.addNode(name, inputs, outputs, posx, posy, class, data, html);
-    
+
     switch (name) {
       case TypeComponent.StartFlow:
         html = `<div class="title-box"><i class="${this.getIconClass(name as TypeComponent)}"></i> <span>${keyFromName}</span></div>`;
@@ -448,8 +475,8 @@ export class PlaygroundComponent implements OnInit {
     linkElement.click();
   }
 
-  async runTest() {   
-    
+  async runTest() {
+
     const modalRef = this.modalService.open(WbotComponent, {
       centered: true,
       backdrop: 'static'

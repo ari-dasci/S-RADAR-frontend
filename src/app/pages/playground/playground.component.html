@@ -47,7 +47,7 @@
           <div class="drag-drawflow drag-bars" [attr.data-node]="algorithm.label">
             <i></i><span >{{algorithm.label}}</span> <!-- Toggle item visibility -->
             
-            <div *ngIf="algorithm.expanded"> <!-- Show items if expanded -->
+            <div *ngIf="algorithm.expanded">  <!-- Show items if expanded --> 
               <div *ngFor="let item of algorithm.items">
                 <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-node]="item">
                   <i></i><span>{{item}}</span>
@@ -64,9 +64,17 @@
         <span> Time Series</span>
       </div>
       <div *ngIf="toggleableTime">
-        <div *ngFor="let algorithm of timeseries_algorithms">
-          <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-node]="algorithm.label">
-            <i></i><span> {{algorithm.label}}</span> <!-- TODO: Faltan iconos -->
+        <div *ngFor="let algorithm of timeseries_algorithms" (click)="toggleItem(algorithm)">
+          <div class="drag-drawflow drag-bars" [attr.data-node]="algorithm.label">
+            <i></i><span >{{algorithm.label}}</span> <!-- Toggle item visibility -->
+            
+            <div *ngIf="algorithm.expanded">  <!-- Show items if expanded  -->
+              <div *ngFor="let item of algorithm.items">
+                <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-node]="item">
+                  <i></i><span>{{item}}</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
