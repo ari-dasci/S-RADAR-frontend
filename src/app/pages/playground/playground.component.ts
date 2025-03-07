@@ -134,7 +134,7 @@ export class PlaygroundComponent implements OnInit {
                 (response) => {
                   const libraryAlgorithms: any = response;
                   const formattedAlgorithms = libraryAlgorithms.map((element: string) => element.charAt(0).toUpperCase() + element.slice(1));
-                 // console.log(formattedAlgorithms);
+                  console.log(formattedAlgorithms);
 
                   this.staticdata_algorithms.push( {
                     label: element.charAt(0).toUpperCase() + element.slice(1),
@@ -160,7 +160,7 @@ export class PlaygroundComponent implements OnInit {
                 (response) => {
                   const libraryAlgorithms: any = response;
                   const formattedAlgorithms = libraryAlgorithms.map((element: string) => element.charAt(0).toUpperCase() + element.slice(1));
-                 // console.log(formattedAlgorithms);
+                  console.log(formattedAlgorithms);
 
                   this.timeseries_algorithms.push( {
                     label: element.charAt(0).toUpperCase() + element.slice(1),
