@@ -2,8 +2,13 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+<<<<<<< HEAD
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,
+=======
+    "strictPropertyInitialization": false,
+    "outDir": "./dist/out-tsc",
+>>>>>>> 340becf87da4942e0b3fec04e4c3d9cf489d2fd2
     "strict": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,

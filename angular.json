@@ -5,7 +5,21 @@
   "projects": {
     "s-adl-frontend": {
       "projectType": "application",
+<<<<<<< HEAD
       "schematics": {},
+=======
+      "schematics": {
+        "@schematics/angular:component": {
+          "standalone": false
+        },
+        "@schematics/angular:directive": {
+          "standalone": false
+        },
+        "@schematics/angular:pipe": {
+          "standalone": false
+        }
+      },
+>>>>>>> 340becf87da4942e0b3fec04e4c3d9cf489d2fd2
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",

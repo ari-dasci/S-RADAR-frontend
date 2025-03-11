@@ -1,5 +1,11 @@
+<<<<<<< HEAD
 # S-ADL-frontend
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.0.
+=======
+# SADLFrontend2
+
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.1.
+>>>>>>> 340becf87da4942e0b3fec04e4c3d9cf489d2fd2
 
 ## Development server
 
