@@ -19,9 +19,20 @@ import { Observable } from 'rxjs';
 export class PlaygroundComponent implements OnInit {
 
   //Model variables
-
+  staticdata_categories: { label: string, icon: string, expanded: boolean }[] = [
+    { label: 'Algorithms', icon: 'fa fa-cogs', expanded: false },
+    { label: 'Preprocessing', icon: 'fa fa-cogs', expanded: false },
+  ];
   staticdata_algorithms: { label: string, icon: string, items: any, expanded: boolean }[] = [];
+  timeseries_categories: { label: string, icon: string, expanded: boolean }[] = [
+    { label: 'Algorithms', icon: 'fa fa-cogs', expanded: false },
+    { label: 'Preprocessing', icon: 'fa fa-cogs', expanded: false },
+  ];
   timeseries_algorithms: { label: string, icon: string, items: any, expanded: boolean }[] = [];
+  federated_categories: { label: string, icon: string, expanded: boolean }[] = [
+    { label: 'Algorithms', icon: 'fa fa-cogs', expanded: false },
+  ];
+  federated_algorithms: { label: string, icon: string, items: any, expanded: boolean }[] = [];
 
 
   //Drawflow variables
@@ -96,6 +107,17 @@ export class PlaygroundComponent implements OnInit {
     this.editor.addNodeOutput(this.selectedNodeId.slice(5));
   }
 
+  // Toggle the visibility of a category (like 'Algorithms' or 'Preprocessing')
+  toggleCategory(category: { label: string, icon: string, expanded: boolean }) {
+    category.expanded = !category.expanded;
+  }
+
+  // Toggle the visibility of an algorithm inside the 'Algorithms' category
+  toggleAlgorithm(algorithm: { label: string, icon: string, expanded: boolean }, event: MouseEvent) {
+    event.stopPropagation(); // Prevent the click event from bubbling up and toggling the parent category
+    algorithm.expanded = !algorithm.expanded;
+  }
+
 
   // ******************************************** MODEL OPERATIONS *****************************************************************//
   getData() {
@@ -122,6 +144,30 @@ export class PlaygroundComponent implements OnInit {
     }
   }
 
+  // getCategories(_type: string) {
+  //   this._apiservice.getCategories(_type)
+  //   .subscribe(
+  //     (response: any) => {
+  //       if (_type == 'static_data') {
+  //         const categories: any[] = Object.keys(response).map(key => response[key]);
+  //         const formattedCategories = categories.map((element: string) => element.charAt(0).toUpperCase() + element.slice(1));
+  //         categories.forEach(element => {
+  //           this.staticdata_categories.push( {
+  //             label: element.charAt(0).toUpperCase() + element.slice(1),
+  //             icon: 'pi pi-fw pi-calculator',
+  //             expanded: false,
+  //           })
+  //         })
+  //         console.log(formattedCategories);
+  //       }
+
+  //     },
+  //     (error) => {
+  //       console.error('Error fetching data:', error);
+  //     }
+  //   );
+  // }
+  
   getAlgorithms(_category: string) {
     this._apiservice.getAlgorithms(_category)
       .subscribe(

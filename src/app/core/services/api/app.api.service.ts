@@ -15,6 +15,16 @@ export class ApiService {
         
         return this._http.get(environment.urlApi + '/utils/blocks');
     }
+    getCategories(_type: string) {
+        if (_type == 'static_data')
+            return this._http.get(environment.urlApi + '/static_data/categories');
+        //if (_category == 'time_series')
+        //    return this._http.get(environment.urlApi + '/time_series/algorithms');
+        else {
+            // Handle invalid category here, for example, throw an error
+            return throwError(() => new Error('Invalid type provided'))
+        }
+    }
     getAlgorithms(_category: string) {
         if (_category == 'static_data')
             return this._http.get(environment.urlApi + '/static_data/algorithms');

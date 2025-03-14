@@ -43,17 +43,33 @@
         <span> Static Data</span>
       </div>
       <div *ngIf="toggleableStatic">
-        <div *ngFor="let algorithm of staticdata_algorithms" (click)="toggleItem(algorithm)">
-          <div class="drag-drawflow drag-bars" [attr.data-node]="algorithm.label">
-            <i></i><span >{{algorithm.label}}</span> <!-- Toggle item visibility -->
-            
-            <div *ngIf="algorithm.expanded">  <!-- Show items if expanded --> 
-              <div *ngFor="let item of algorithm.items">
-                <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-node]="item">
-                  <i></i><span>{{item}}</span>
+        <!-- Static categories -->
+        <div *ngFor="let category of staticdata_categories" (click)="toggleItem(category)">
+          
+          <div class="drag-drawflow drag-bars" [attr.data-node]="category.label">
+            <i style="margin-right: 8px;" class="{{category.icon}}"></i><span>{{category.label}}</span>
+      
+           <!-- Load algorithms dynamically only for the 'Algorithms' category -->
+          <div *ngIf="category.label === 'Algorithms' && category.expanded">
+            <div *ngFor="let algorithm of staticdata_algorithms" (click)="toggleAlgorithm(algorithm, $event)">
+              <div class="drag-drawflow drag-bars" [attr.data-node]="algorithm.label">
+                <i style="margin-right: 8px;" class="{{algorithm.icon}}"></i><span>{{algorithm.label}}</span>
+                <div *ngIf="algorithm.expanded">
+                  <div *ngFor="let item of algorithm.items">
+                    <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-node]="item">
+                      <i style="margin-right: 8px;" class="fa-solid fa-calculator"></i><span>{{item}}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
+          </div>
+      
+            <!-- Empty content for 'Preprocessing' category, you can add content later -->
+            <div *ngIf="category.label === 'Preprocessing'">
+              <!-- Preprocessing is currently empty -->
+            </div>
+            
           </div>
         </div>
       </div>
