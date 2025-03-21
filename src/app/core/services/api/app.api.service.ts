@@ -30,6 +30,8 @@ export class ApiService {
             return this._http.get(environment.urlApi + '/static_data/algorithms');
         if (_category == 'time_series')
             return this._http.get(environment.urlApi + '/time_series/algorithms');
+        if (_category == 'federated_data')
+            return this._http.get(environment.urlApi + '/federated_data/algorithms');
         else {
             // Handle invalid category here, for example, throw an error
             return throwError(() => new Error('Invalid category provided'))
@@ -40,6 +42,8 @@ export class ApiService {
             return this._http.get(environment.urlApi + '/static_data/library_algorithms/' + _library)
         if (_category == 'time_series')
             return this._http.get(environment.urlApi + '/time_series/library_algorithms/' + _library)
+        if (_category == 'federated_data')
+            return this._http.get(environment.urlApi + '/federated_data/library_algorithms/' + _library)
         else {
             // Handle invalid category here, for example, throw an error
             return throwError(() => new Error('Invalid category provided'))

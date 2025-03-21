@@ -49,7 +49,7 @@ export class PlaygroundComponent implements OnInit {
   @Input()
   otherDetails: any;
 
-  toggleableImages: boolean = false;
+  toggleableFederated: boolean = false;
   toggleableStatic: boolean = false;
   toggleableTime: boolean = false;
   editor!: any;
@@ -92,6 +92,7 @@ export class PlaygroundComponent implements OnInit {
     //this.getData();
     this.getAlgorithms('static_data');
     this.getAlgorithms('time_series');
+    this.getAlgorithms('federated_data');
   }
 
   ngAfterViewInit(): void {
@@ -223,7 +224,33 @@ export class PlaygroundComponent implements OnInit {
               )
             });
           }
+          if (_category == 'federated_data') {
+            const algorithms: any[] = Object.keys(response).map(key => response[key]);
+
+            algorithms.forEach(element => {
+              this._apiservice.getLibraryAlgorithms(_category, element).subscribe(
+                (response) => {
+                  const libraryAlgorithms: any = response;
+                  const formattedAlgorithms = libraryAlgorithms.map((element: string) => element.charAt(0).toUpperCase() + element.slice(1));
+                  console.log(formattedAlgorithms);
+
+                  this.federated_algorithms.push( {
+                    label: element.charAt(0).toUpperCase() + element.slice(1),
+                    icon: 'pi pi-fw pi-calculator',
+                    items: formattedAlgorithms,
+                    expanded: false,
+                  })
+
+                  return formattedAlgorithms;
+                }
+                , (error) => {
+                  console.error('Error fetching data:', error);
+                }
+              )
+            });
+          }
         },
+        
         (error) => {
           console.error('Error fetching data:', error);
         }
