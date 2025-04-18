@@ -5,6 +5,7 @@ import { ComponentItem } from '../../../models/components/component-item';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { SharedDataService } from '../../../providers/sharedData.service';
 import { DataFilterService } from '../../../providers/data-filter.service';
+import { ApiService } from '../../../../core/services/api/app.api.service';
 
 declare module 'axios' {
   interface AxiosRequestConfig {
@@ -25,8 +26,9 @@ export class ConfigComponentsComponent implements OnInit {
 
   components = TypeComponent;
   public formGeral: FormGroup;
+  itemSelectedParams: any;
 
-  constructor(public activeModal: NgbActiveModal, private fb: FormBuilder, private sharedDataService: SharedDataService, private dataFilterService: DataFilterService
+  constructor(private _apiservice: ApiService, public activeModal: NgbActiveModal, private fb: FormBuilder, private sharedDataService: SharedDataService, private dataFilterService: DataFilterService
     , private elementRef: ElementRef) {
     this.sharedDataService.getSelectedItemObservable().subscribe((item) => {
       this.itemSelected = item;
@@ -34,10 +36,11 @@ export class ConfigComponentsComponent implements OnInit {
   }
 
   ngOnInit() {
-    
-    // this.methodsCallapi = (Object.keys(MethodCallapi) as Array<keyof typeof MethodCallapi>).filter(key => isNaN(Number(MethodCallapi[key]))) as string[];
+
     this.itemSelected = new ComponentItem(this.itemSelected);
     JSON.stringify(this.itemSelected);
+
+    //Get parameters from itemSelected
     this.buildForms();
     this.filterData();
   }
@@ -48,16 +51,31 @@ export class ConfigComponentsComponent implements OnInit {
   }
 
   buildForms() {
-    this.formGeral = this.fb.group({
-      name: [''],
-      nameOut: [''],
-      data: [{}],
-    });
+    console.log(this.itemSelected.name);
 
-    this.fillFormGeral();
+    // Fetch parameters from the API
+    this._apiservice.getParams(this.itemSelected.name).subscribe((data: any) => {
+      this.itemSelectedParams = data;
+      console.log(this.itemSelectedParams);
+
+      // Initialize formGeral
+      this.formGeral = this.fb.group({});
+
+      // Dynamically add form controls based on itemSelectedParams
+      for (const key in this.itemSelectedParams) {
+        if (this.itemSelectedParams.hasOwnProperty(key)) {
+          this.formGeral.addControl(key, this.fb.control(this.itemSelectedParams[key]));
+        }
+      }
+
+      // Fill the form with the data from itemSelected (default values)
+      //this.fillFormGeral();
+    }, error => {
+      console.error('Error fetching parameters:', error);
+    });
   }
 
-  fillFormGeral() {
+  /*fillFormGeral() {
     this.formGeral.patchValue({
       name: this.itemSelected.name,
       nameOut: this.itemSelected.name.concat('_result'),
@@ -67,17 +85,33 @@ export class ConfigComponentsComponent implements OnInit {
     if (this.itemSelected.class === this.components.StartFlow) {
       this.formGeral.disable()
     }
+  }*/
+
+  public save_params(){
+
+    // Collect data from formGeral
+    const formData = this.formGeral.value;
+    //console.log('Form Data:', formData);
+
+    //this.updateItem()
+
+    //this.sharedDataService.updateSelectedItem(this.itemSelected);
+    // Show a confirmation alert
+    //alert('Parameters saved successfully!');
+
+    const kwargs = { ...formData }; // Spread operator to copy formData into kwargs
+    console.log('Kwargs:', kwargs);
+
+    // Save parameters with the API
+    this._apiservice.setParams(kwargs).subscribe((data: any) => {
+
+      // Show a confirmation alert
+      alert('Parameters saved successfully!');
+    }, error => {
+      console.error('Error fetching parameters:', error);
+    });
   }
 
-  public confirmar() {
-    const inputs = this.keyValuePairsToObjects(this.elementRef.nativeElement.querySelector("[data-query-inputList]"));
-    
-    this.updateItem()
-
-    this.sharedDataService.updateSelectedItem(this.itemSelected);
-    this.activeModal.close(this.itemSelected);
-
-  }
 
   updateItem() {
     // Itera sobre os controles do FormGroup
@@ -106,7 +140,7 @@ export class ConfigComponentsComponent implements OnInit {
   addInput() {
     const queryInputListContainer = this.elementRef.nativeElement.querySelector('[data-query-inputList]');
     if (queryInputListContainer)
-    queryInputListContainer.append(this.createKeyValuePair())
+      queryInputListContainer.append(this.createKeyValuePair())
 
 
     // this.inputList = document.getElementById('inputList')!;
@@ -205,7 +239,7 @@ export class ConfigComponentsComponent implements OnInit {
     return [...pairs].reduce((data, pair) => {
       const key = pair.querySelector("[data-key]").value
       const value = pair.querySelector("[data-value]").value
-  
+
       if (key === "") return data
       return { ...data, [key]: value }
     }, {})

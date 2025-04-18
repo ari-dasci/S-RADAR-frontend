@@ -24,11 +24,13 @@ export class PlaygroundComponent implements OnInit {
     { label: 'Preprocessing', icon: 'fa fa-cogs', expanded: false },
   ];
   staticdata_algorithms: { label: string, icon: string, items: any, expanded: boolean }[] = [];
+
   timeseries_categories: { label: string, icon: string, expanded: boolean }[] = [
     { label: 'Algorithms', icon: 'fa fa-cogs', expanded: false },
     { label: 'Preprocessing', icon: 'fa fa-cogs', expanded: false },
   ];
   timeseries_algorithms: { label: string, icon: string, items: any, expanded: boolean }[] = [];
+
   federated_categories: { label: string, icon: string, expanded: boolean }[] = [
     { label: 'Algorithms', icon: 'fa fa-cogs', expanded: false },
   ];
@@ -634,6 +636,7 @@ export class PlaygroundComponent implements OnInit {
   private hideEditButton() {
     this.editButtonShown = false;
     this.editDivHtml = document.getElementById('editNode')!;
+  
     if (this.editDivHtml) {
       this.editDivHtml.remove();
     }

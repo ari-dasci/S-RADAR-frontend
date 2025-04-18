@@ -7,21 +7,26 @@
   <app-nav-tabs-config [itemSelected]="itemSelected"></app-nav-tabs-config>
   <div class="tab-content" id="nav-tabContent">
 
-    <!-- TAB GERAL -->
+    <!-- TAB PARAMETERS -->
     <div class="tab-pane fade show active" id="nav-geral">
-      <form [formGroup]="formGeral">
+      <form *ngIf="formGeral" [formGroup]="formGeral">
         <div class="form-group">
-          <label for="name">Name</label>
-          <input type="text" class="form-control" placeholder="Enter component name" formControlName="name" id="name">
-          <!-- <small id="emailHelp" class="form-text text-muted">component name</small> -->
 
-          <label for="nameOut">Name out</label>
-          <input type="text" class="form-control" placeholder="Enter component output name" formControlName="nameOut"
-            id="nameOut">
+          <!-- Dynamically generate form fields -->
+          <div *ngFor="let control of formGeral.controls | keyvalue">
+            <label [for]="control.key">{{ control.key }}</label>
+            <input
+              type="text"
+              class="form-control"
+              [id]="control.key"
+              [formControlName]="control.key"
+              [placeholder]="'Enter ' + control.key"
+            />
+          </div>
         </div>
       </form>
 
-      <ul class="nav nav-tabs justify-content-end" id="myTab" role="tablist">
+      <!-- <ul class="nav nav-tabs justify-content-end" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
           <a class="nav-link" data-bs-toggle="collapse" href="#inputs" role="tab" aria-expanded="false">
             Input
@@ -34,8 +39,8 @@
             <button type="button" class="btn btn-primary" (click)="addInput()"><i class="fa fa-plus"
                 aria-hidden="true"></i>
               input</button>
-            <!-- <div class="card card-body" id="inputList">
-            </div> -->
+             <div class="card card-body" id="inputList">
+            </div> 
             <div data-query-inputList></div>
           </div>
         </div>
@@ -48,7 +53,7 @@
         <input type="text" data-value class="form-control" placeholder="Value" />
         <button type="button" data-remove-btn class="btn btn-outline-danger">Remove</button>
       </div>
-    </template>
+    </template>-->
 
     <!-- END TAB GERAL -->
 
@@ -96,5 +101,5 @@
 
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-primary" (click)="confirmar()">Salvar</button>
+  <button type="button" class="btn btn-primary" (click)="save_params()">Save</button>
 </div>

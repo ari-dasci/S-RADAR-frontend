@@ -49,4 +49,14 @@ export class ApiService {
             return throwError(() => new Error('Invalid category provided'))
         }
     }
+
+
+
+    getParams(_model: string) {
+        return this._http.get(environment.urlApi + "/static_data/get_params/" + _model.toLowerCase())
+    }
+
+    setParams(kwargs:string){
+        return this._http.post(environment.urlApi + "/static_data/set_params", kwargs)  
+    }
 }
