@@ -17,10 +17,6 @@
 
   <header>
     <h2>S-ADL Playground</h2>
-    <!-- <div class="github-link"><a href="https://github.com/jerosoler/Drawflow" target="_blank"> <i class="fas fa-save fa-3x"></i></a></div> -->
-    <!-- <div class="them-edit-link"><a href="https://jerosoler.github.io/drawflow-theme-generator/" target="_blank">🎨</a></div> -->
-
-    <!-- <button type="button" class="them-edit-link btn btn-primary" (click)="teste()">Primary</button> -->
   </header>
   <div class="wrapper">
     <div class="col">
@@ -35,15 +31,28 @@
           <div class="drag-drawflow drag-bars" [attr.data-node]="category.label">
             <i style="margin-right: 8px;" class="{{category.icon}}"></i><span>{{category.label}}</span>
       
-           <!-- Load algorithms dynamically only for the 'Algorithms' category -->
+          <!-- Load algorithms dynamically only for the 'Algorithms' category -->
           <div *ngIf="category.label === 'Algorithms' && category.expanded">
+
+            <!-- Load algorithms base module OPERATIONS -->
+            <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" >
+              <i style="margin-right: 8px;" class="fa fa-robot"></i><span>fit()</span>
+            </div>
+            <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)">
+              <i style="margin-right: 8px;" class="fa fa-robot"></i><span>predict()</span>
+            </div>
+            <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)">
+              <i style="margin-right: 8px;" class="fa fa-robot"></i><span>decision_function()</span>
+            </div>
+
+            <!-- Load algorithms -->
             <div *ngFor="let algorithm of federated_algorithms" (click)="toggleAlgorithm(algorithm, $event)">
               <div class="drag-drawflow drag-bars" [attr.data-node]="algorithm.label">
                 <i style="margin-right: 8px;" class="{{algorithm.icon}}"></i><span>{{algorithm.label}}</span>
                 <div *ngIf="algorithm.expanded">
                   <div *ngFor="let item of algorithm.items">
                     <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-node]="item">
-                      <i style="margin-right: 8px;" class="fa-solid fa-calculator"></i><span>{{item}}</span>
+                      <i style="margin-right: 8px;" class="fa fa-calculator"></i><span>{{item}}</span>
                     </div>
                   </div>
                 </div>
@@ -66,22 +75,40 @@
         <i class="fa fa-bars" aria-hidden="true"></i>
         <span> Static Data</span>
       </div>
+
       <div *ngIf="toggleableStatic">
+
+        
         <!-- Static categories -->
         <div *ngFor="let category of staticdata_categories" (click)="toggleItem(category)">
-          
+
+       
           <div class="drag-drawflow drag-bars" [attr.data-node]="category.label">
             <i style="margin-right: 8px;" class="{{category.icon}}"></i><span>{{category.label}}</span>
       
            <!-- Load algorithms dynamically only for the 'Algorithms' category -->
           <div *ngIf="category.label === 'Algorithms' && category.expanded">
+
+
+            <!-- Load algorithms base module OPERATIONS -->
+            <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" >
+              <i style="margin-right: 8px;" class="fa fa-robot"></i><span>fit()</span>
+            </div>
+            <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)">
+              <i style="margin-right: 8px;" class="fa fa-robot"></i><span>predict()</span>
+            </div>
+            <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)">
+              <i style="margin-right: 8px;" class="fa fa-robot"></i><span>decision_function()</span>
+            </div>
+          
+
             <div *ngFor="let algorithm of staticdata_algorithms" (click)="toggleAlgorithm(algorithm, $event)">
               <div class="drag-drawflow drag-bars" [attr.data-node]="algorithm.label">
                 <i style="margin-right: 8px;" class="{{algorithm.icon}}"></i><span>{{algorithm.label}}</span>
                 <div *ngIf="algorithm.expanded">
                   <div *ngFor="let item of algorithm.items">
                     <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-node]="item">
-                      <i style="margin-right: 8px;" class="fa-solid fa-calculator"></i><span>{{item}}</span>
+                      <i style="margin-right: 8px;" class="fa fa-calculator"></i><span>{{item}}</span>
                     </div>
                   </div>
                 </div>
@@ -113,6 +140,19 @@
       
            <!-- Load algorithms dynamically only for the 'Algorithms' category -->
           <div *ngIf="category.label === 'Algorithms' && category.expanded">
+
+            
+            <!-- Load algorithms base module OPERATIONS -->
+            <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" >
+              <i style="margin-right: 8px;" class="fa fa-robot"></i><span>fit()</span>
+            </div>
+            <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)">
+              <i style="margin-right: 8px;" class="fa fa-robot"></i><span>predict()</span>
+            </div>
+            <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)">
+              <i style="margin-right: 8px;" class="fa fa-robot"></i><span>decision_function()</span>
+            </div>
+
             <div *ngFor="let algorithm of timeseries_algorithms" (click)="toggleAlgorithm(algorithm, $event)">
               <div class="drag-drawflow drag-bars" [attr.data-node]="algorithm.label">
                 <i style="margin-right: 8px;" class="{{algorithm.icon}}"></i><span>{{algorithm.label}}</span>

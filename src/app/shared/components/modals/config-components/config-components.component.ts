@@ -40,9 +40,29 @@ export class ConfigComponentsComponent implements OnInit {
     this.itemSelected = new ComponentItem(this.itemSelected);
     JSON.stringify(this.itemSelected);
 
-    //Get parameters from itemSelected
-    this.buildForms();
-    this.filterData();
+    // Get parameters for the selected node
+    const nodeKey = `savedParams_${this.itemSelected.id}`;
+    const savedParams = localStorage.getItem(nodeKey);
+
+    if (savedParams) {
+      console.log('Saved Params from Local Storage:', savedParams);
+      this.itemSelectedParams = JSON.parse(savedParams);
+      console.log('Loaded Params from Local Storage:', this.itemSelectedParams);
+
+      // Initialize the form with the saved parameters
+        // Initialize formGeral
+        this.formGeral = this.fb.group({});
+
+        // Dynamically add form controls based on itemSelectedParams
+        for (const key in this.itemSelectedParams) {
+          if (this.itemSelectedParams.hasOwnProperty(key)) {
+            this.formGeral.addControl(key, this.fb.control(this.itemSelectedParams[key]));
+          }
+        }
+    } else {
+      console.log('No saved parameters found in local storage.');
+      this.buildForms();
+    }
   }
 
   updateParentForm(childFormValue: any) {
@@ -51,9 +71,11 @@ export class ConfigComponentsComponent implements OnInit {
   }
 
   buildForms() {
-    console.log(this.itemSelected.name);
 
-    // Fetch parameters from the API
+    //TODO: Fetch parameters from the API (Time Series Data)
+    //TODO: Fetch parameters from the API (Federated Data)
+    
+    //Fetch parameters from the API (Static Data)
     this._apiservice.getParams(this.itemSelected.name).subscribe((data: any) => {
       this.itemSelectedParams = data;
       console.log(this.itemSelectedParams);
@@ -75,17 +97,6 @@ export class ConfigComponentsComponent implements OnInit {
     });
   }
 
-  /*fillFormGeral() {
-    this.formGeral.patchValue({
-      name: this.itemSelected.name,
-      nameOut: this.itemSelected.name.concat('_result'),
-      data: JSON.stringify(this.itemSelected.data)
-    });
-
-    if (this.itemSelected.class === this.components.StartFlow) {
-      this.formGeral.disable()
-    }
-  }*/
 
   public save_params(){
 
@@ -100,15 +111,25 @@ export class ConfigComponentsComponent implements OnInit {
     //alert('Parameters saved successfully!');
 
     const kwargs = { ...formData }; // Spread operator to copy formData into kwargs
+    kwargs.algorithm_ = kwargs.algorithm_.toLowerCase();
     console.log('Kwargs:', kwargs);
 
     // Save parameters with the API
     this._apiservice.setParams(kwargs).subscribe((data: any) => {
 
+      this.updateItem()
+      this.sharedDataService.updateSelectedItem(this.itemSelected); 
+
+      // Save parameters to local storage with a node-specific key
+      const nodeKey = `savedParams_${this.itemSelected.id}`;
+      localStorage.setItem(nodeKey, JSON.stringify(kwargs));
+
       // Show a confirmation alert
       alert('Parameters saved successfully!');
     }, error => {
-      console.error('Error fetching parameters:', error);
+      console.log(error)
+      const errorMessage = error.detail || error.error?.detail || 'An unexpected error occurred.';
+      alert('Error fetching parameters: ' + errorMessage);
     });
   }
 
@@ -117,7 +138,6 @@ export class ConfigComponentsComponent implements OnInit {
     // Itera sobre os controles do FormGroup
     Object.keys(this.formGeral.controls).forEach(controlName => {
       // Verifica se o campo correspondente existe em itemSelected
-      debugger
       if (this.itemSelected.hasOwnProperty(controlName)) {
         // Define o valor do controle no itemSelected
         this.itemSelected[controlName] = this.tryParseJSON(this.formGeral.get(controlName)?.value);
@@ -137,15 +157,7 @@ export class ConfigComponentsComponent implements OnInit {
     this.activeModal.close(false);
   }
 
-  addInput() {
-    const queryInputListContainer = this.elementRef.nativeElement.querySelector('[data-query-inputList]');
-    if (queryInputListContainer)
-      queryInputListContainer.append(this.createKeyValuePair())
-
-
-    // this.inputList = document.getElementById('inputList')!;
-    // this.inputList.innerHTML += '<input class="form-control form-control-sm mb-2" type="text" placeholder="Insert input here">';
-  }
+ 
 
   private createKeyValuePair() {
     const keyValueTemplate = this.elementRef.nativeElement.querySelector('[data-key-value-template]');
@@ -156,94 +168,29 @@ export class ConfigComponentsComponent implements OnInit {
     return element
   }
 
-  filterData() {
-    const people = [
-      {
-        "name": "John Doe",
-        "age": 30,
-        "address": {
-          "country": "Brazil"
-        }
-      },
-      {
-        "name": "Jane Doe",
-        "age": 25,
-        "address": {
-          "country": "United States"
-        }
-      }
-    ]
-
-    const persons = [
-      {
-        "name": "Peter Smith",
-        "age": 40,
-        "address": {
-          "country": "Canada"
-        }
-      },
-      {
-        "name": "Sarah Jones",
-        "age": 35,
-        "address": {
-          "country": "Brazil"
-        }
-      }
-    ]
-
-    const cars = [
-      {
-        "make": "Toyota",
-        "model": "Corolla",
-        "country": "Brazil"
-      },
-      {
-        "make": "Honda",
-        "model": "Civic",
-        "country": "United States"
-      }
-    ]
-    const data = [...people, ...persons, ...cars];
-    const expression = "[?address.country == 'li' || country == 'po']";
-    const filteredData = this.dataFilterService.filterData(data, expression);
-    console.log(filteredData); // Faça algo com os dados filtrados
-  }
-
-  // ngAfterViewInit() {
-  //   const keyValueTemplate = document.querySelector("[data-key-value-template]")!
-  //   const queryParamsContainer = document.querySelector("[data-query-params]")!
-  //   const form = document.querySelector("[data-form]")
-  //   const requestHeadersContainer = document.querySelector("[data-request-headers]")
-  //   const responseHeadersContainer = document.querySelector(
-  //     "[data-response-headers]"
-  //   )
 
 
-  //   this.elementRef.nativeElement.querySelector("[data-add-query-param-btn]")
-  //     .addEventListener("click", () => {
-  //       queryParamsContainer.append(createKeyValuePair())
-  //     })
 
-  //   function createKeyValuePair() {
-  //     const element = keyValueTemplate.content.cloneNode(true)
-  //     element.querySelector("[data-remove-btn]").addEventListener("click", e => {
-  //       e.target.closest("[data-key-value-pair]").remove()
-  //     })
-  //     return element
-  //   }
+ /* Not used functions */
+//  private keyValuePairsToObjects(container: any) {
+//   const pairs = container.querySelectorAll("[data-key-value-pair]")
+//   return [...pairs].reduce((data, pair) => {
+//     const key = pair.querySelector("[data-key]").value
+//     const value = pair.querySelector("[data-value]").value
 
-  // }
+//     if (key === "") return data
+//     return { ...data, [key]: value }
+//   }, {})
+// }
 
-  private keyValuePairsToObjects(container: any) {
-    const pairs = container.querySelectorAll("[data-key-value-pair]")
-    return [...pairs].reduce((data, pair) => {
-      const key = pair.querySelector("[data-key]").value
-      const value = pair.querySelector("[data-value]").value
+// addInput() {
+//   const queryInputListContainer = this.elementRef.nativeElement.querySelector('[data-query-inputList]');
+//   if (queryInputListContainer)
+//     queryInputListContainer.append(this.createKeyValuePair())
 
-      if (key === "") return data
-      return { ...data, [key]: value }
-    }, {})
-  }
 
+//   // this.inputList = document.getElementById('inputList')!;
+//   // this.inputList.innerHTML += '<input class="form-control form-control-sm mb-2" type="text" placeholder="Insert input here">';
+// }
 
 }
