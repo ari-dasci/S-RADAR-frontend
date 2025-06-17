@@ -40,7 +40,7 @@ export class ConfigComponentsComponent implements OnInit {
     this.itemSelected = new ComponentItem(this.itemSelected);
     JSON.stringify(this.itemSelected);
 
-    // Get parameters for the selected node
+    // Get parameters for the selected node, if avbailable in local storage
     const nodeKey = `savedParams_${this.itemSelected.id}`;
     const savedParams = localStorage.getItem(nodeKey);
 
@@ -66,17 +66,14 @@ export class ConfigComponentsComponent implements OnInit {
   }
 
   updateParentForm(childFormValue: any) {
-    // Atualize o FormGroup pai com os valores do FormGroup filho
     this.formGeral.patchValue(childFormValue);
   }
 
   buildForms() {
 
-    //TODO: Fetch parameters from the API (Time Series Data)
-    //TODO: Fetch parameters from the API (Federated Data)
-    
+    console.log('Fetching parameters for:', this.itemSelected);
     //Fetch parameters from the API (Static Data)
-    this._apiservice.getParams(this.itemSelected.name).subscribe((data: any) => {
+    this._apiservice.getParams(this.itemSelected.name, this.itemSelected.data.category).subscribe((data: any) => {
       this.itemSelectedParams = data;
       console.log(this.itemSelectedParams);
 
@@ -102,20 +99,13 @@ export class ConfigComponentsComponent implements OnInit {
 
     // Collect data from formGeral
     const formData = this.formGeral.value;
-    //console.log('Form Data:', formData);
-
-    //this.updateItem()
-
-    //this.sharedDataService.updateSelectedItem(this.itemSelected);
-    // Show a confirmation alert
-    //alert('Parameters saved successfully!');
 
     const kwargs = { ...formData }; // Spread operator to copy formData into kwargs
     kwargs.algorithm_ = kwargs.algorithm_.toLowerCase();
     console.log('Kwargs:', kwargs);
 
     // Save parameters with the API
-    this._apiservice.setParams(kwargs).subscribe((data: any) => {
+    this._apiservice.setParams(kwargs, this.itemSelected.data.category).subscribe((data: any) => {
 
       this.updateItem()
       this.sharedDataService.updateSelectedItem(this.itemSelected); 
@@ -169,28 +159,5 @@ export class ConfigComponentsComponent implements OnInit {
   }
 
 
-
-
- /* Not used functions */
-//  private keyValuePairsToObjects(container: any) {
-//   const pairs = container.querySelectorAll("[data-key-value-pair]")
-//   return [...pairs].reduce((data, pair) => {
-//     const key = pair.querySelector("[data-key]").value
-//     const value = pair.querySelector("[data-value]").value
-
-//     if (key === "") return data
-//     return { ...data, [key]: value }
-//   }, {})
-// }
-
-// addInput() {
-//   const queryInputListContainer = this.elementRef.nativeElement.querySelector('[data-query-inputList]');
-//   if (queryInputListContainer)
-//     queryInputListContainer.append(this.createKeyValuePair())
-
-
-//   // this.inputList = document.getElementById('inputList')!;
-//   // this.inputList.innerHTML += '<input class="form-control form-control-sm mb-2" type="text" placeholder="Insert input here">';
-// }
 
 }

@@ -52,11 +52,30 @@ export class ApiService {
 
 
 
-    getParams(_model: string) {
-        return this._http.get(environment.urlApi + "/static_data/get_params/" + _model.toLowerCase())
+    getParams(_model: string, _category: string) {
+        let modelName = _model.charAt(0).toLowerCase() + _model.slice(1);
+        if (_category == 'static_data')
+            return this._http.get(environment.urlApi + "/static_data/get_params/" + modelName)
+        if (_category == 'time_series')
+            return this._http.get(environment.urlApi + "/time_series/get_params/" + modelName)
+        if (_category == 'federated_data')
+            return this._http.get(environment.urlApi + "/federated_data/get_params/" + modelName)
+        else {
+            // Handle invalid category here, for example, throw an error
+            return throwError(() => new Error('Invalid category provided'))
+        }
     }
 
-    setParams(kwargs:string){
-        return this._http.post(environment.urlApi + "/static_data/set_params", kwargs)  
+    setParams(kwargs:string, _category: string) {
+        if (_category == 'static_data')
+            return this._http.post(environment.urlApi + "/static_data/set_params", kwargs)  
+        if (_category == 'time_series')
+            return this._http.post(environment.urlApi + "/time_series/set_params", kwargs)
+        if (_category == 'federated_data')
+            return this._http.post(environment.urlApi + "/federated_data/set_params", kwargs)
+        else {
+            // Handle invalid category here, for example, throw an error
+            return throwError(() => new Error('Invalid category provided'))
+        }
     }
 }

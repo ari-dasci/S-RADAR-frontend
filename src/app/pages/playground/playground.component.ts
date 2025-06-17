@@ -9,6 +9,7 @@ import { WbotComponent } from '../../shared/components/modals/wbot/wbot.componen
 import { trigger, transition, style, animate } from '@angular/animations';
 import { ApiService } from '../../core/services/api/app.api.service';
 import { Observable } from 'rxjs';
+import { ConfigDatasetComponentsComponent } from '../../shared/components/modals/config-dataset-components/config-dataset-components.component';
 
 @Component({
   selector: 'playground',
@@ -17,6 +18,11 @@ import { Observable } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PlaygroundComponent implements OnInit {
+
+  //Typenames
+  federated_data: string = 'federated_data';
+  static_data: string = 'static_data';
+  time_series: string = 'time_series';  
 
   //Model variables
   staticdata_categories: { label: string, icon: string, expanded: boolean }[] = [
@@ -33,6 +39,7 @@ export class PlaygroundComponent implements OnInit {
 
   federated_categories: { label: string, icon: string, expanded: boolean }[] = [
     { label: 'Algorithms', icon: 'fa fa-cogs', expanded: false },
+    { label: 'Preprocessing', icon: 'fa fa-cogs', expanded: false },
   ];
   federated_algorithms: { label: string, icon: string, items: any, expanded: boolean }[] = [];
 
@@ -440,6 +447,8 @@ export class PlaygroundComponent implements OnInit {
       this.selectedNode = ev.target.closest(".drag-drawflow").getAttribute('data-node');
     } else {
       ev.dataTransfer.setData("node", ev.target.getAttribute('data-node'));
+      ev.dataTransfer.setData("category", ev.target.getAttribute('data-category'));
+      ev.dataTransfer.setData("icon", ev.target.getAttribute('data-icon'));
     }
   }
 
@@ -453,11 +462,14 @@ export class PlaygroundComponent implements OnInit {
     } else {
       ev.preventDefault();
       var data = ev.dataTransfer.getData("node");
-      this.addNodeToDrawFlow(data, ev.clientX, ev.clientY);
+      var category = ev.dataTransfer.getData("category");
+      var icon = ev.dataTransfer.getData("icon");
+      console.log('Drop data: ', data, category, icon);
+      this.addNodeToDrawFlow(data, category, icon,  ev.clientX, ev.clientY);
     }
   }
 
-  private addNodeToDrawFlow(name: string, pos_x: number, pos_y: number): false | true {
+  private addNodeToDrawFlow(name: string, category:string, icon: string, pos_x: number, pos_y: number): false | true {
     if (this.editor.editor_mode === 'fixed') {
       return false;
     }
@@ -523,8 +535,8 @@ export class PlaygroundComponent implements OnInit {
         break;
       default:
         if (name) {
-          html = `<div class="title-box"><i class="${this.getIconClass(name as TypeComponent)}"></i> <span>${name}</span></div>`;
-          this.editor.addNode(name, 1, 1, pos_x, pos_y, name, {}, html);
+          html = `<div class="title-box"><i class="${icon}"></i> <span>${name}</span></div>`;
+          this.editor.addNode(name, 1, 1, pos_x, pos_y, name, { category }, html);
         }
     }
 
@@ -603,22 +615,43 @@ export class PlaygroundComponent implements OnInit {
 
   private openModalConfig() {
 
-    const modalRef = this.modalService.open(ConfigComponentsComponent, {
-      centered: true,
-      backdrop: 'static',
-      size: 'lg'
-    });
+    if (this.selectedNode.name === 'Load Dataset'){
+      const modalRef = this.modalService.open(ConfigDatasetComponentsComponent, {
+        centered: true,
+        backdrop: 'static',
+        size: 'lg'
+      });
+      
+      modalRef.componentInstance.itemSelected = this.selectedNode;
+      let typeComponentSelected = this.selectedNode.class;
 
-    modalRef.componentInstance.itemSelected = this.selectedNode;
-    let typeComponentSelected = this.selectedNode.class;
+      modalRef.componentInstance.confirmarLabel = 'Sim';
+      modalRef.componentInstance.cancelarLabel = 'Não';
+      modalRef.result.then(result => {
+        if (result) {
+          this.updateNameComponentHtml(typeComponentSelected, result.name);
+        }
+      });
+    }
+    else {
+      const modalRef = this.modalService.open(ConfigComponentsComponent, {
+        centered: true,
+        backdrop: 'static',
+        size: 'lg'
+      });
 
-    modalRef.componentInstance.confirmarLabel = 'Sim';
-    modalRef.componentInstance.cancelarLabel = 'Não';
-    modalRef.result.then(result => {
-      if (result) {
-        this.updateNameComponentHtml(typeComponentSelected, result.name);
-      }
-    });
+      modalRef.componentInstance.itemSelected = this.selectedNode;
+      let typeComponentSelected = this.selectedNode.class;
+
+      modalRef.componentInstance.confirmarLabel = 'Sim';
+      modalRef.componentInstance.cancelarLabel = 'Não';
+      modalRef.result.then(result => {
+        if (result) {
+          this.updateNameComponentHtml(typeComponentSelected, result.name);
+        }
+      });
+
+    }
   }
 
   private updateNameComponentHtml(typeComponentSelected: string, name: string) {

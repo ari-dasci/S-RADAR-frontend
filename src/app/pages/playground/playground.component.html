@@ -51,7 +51,7 @@
                 <i style="margin-right: 8px;" class="{{algorithm.icon}}"></i><span>{{algorithm.label}}</span>
                 <div *ngIf="algorithm.expanded">
                   <div *ngFor="let item of algorithm.items">
-                    <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-node]="item">
+                    <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-node]="item" [attr.data-category]="federated_data" [attr.data-icon]="'fa fa-calculator'">
                       <i style="margin-right: 8px;" class="fa fa-calculator"></i><span>{{item}}</span>
                     </div>
                   </div>
@@ -64,8 +64,13 @@
             <div *ngIf="category.label === 'Preprocessing'">
               <!-- Preprocessing is currently empty -->
             </div>
+
+            
             
           </div>
+        </div>
+        <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-node]="'Load Dataset'" [attr.data-icon]="'fa fa-database'">
+              <i style="margin-right: 8px;" class="fa fa-database"></i><span>Load Dataset</span>
         </div>
       </div>
 
@@ -107,7 +112,7 @@
                 <i style="margin-right: 8px;" class="{{algorithm.icon}}"></i><span>{{algorithm.label}}</span>
                 <div *ngIf="algorithm.expanded">
                   <div *ngFor="let item of algorithm.items">
-                    <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-node]="item">
+                    <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-node]="item" [attr.data-category]="static_data">
                       <i style="margin-right: 8px;" class="fa fa-calculator"></i><span>{{item}}</span>
                     </div>
                   </div>
@@ -158,7 +163,7 @@
                 <i style="margin-right: 8px;" class="{{algorithm.icon}}"></i><span>{{algorithm.label}}</span>
                 <div *ngIf="algorithm.expanded">
                   <div *ngFor="let item of algorithm.items">
-                    <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-node]="item">
+                    <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-node]="item" [attr.data-category]="time_series">
                       <i style="margin-right: 8px;" class="fa-solid fa-calculator"></i><span>{{item}}</span>
                     </div>
                   </div>

@@ -12,6 +12,7 @@ import { ApiService } from './providers/api.service';
 import { FlowService } from './providers/flow.service';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { WbotComponent } from './components/modals/wbot/wbot.component';
+import { ConfigDatasetComponentsComponent } from './components/modals/config-dataset-components/config-dataset-components.component';
 
 @NgModule({
   imports: [
@@ -23,7 +24,7 @@ import { WbotComponent } from './components/modals/wbot/wbot.component';
     NgSelectModule,
     HttpClientModule
   ],
-  declarations: [ConfirmacaoComponent, WbotComponent],
+  declarations: [ConfirmacaoComponent, WbotComponent, ConfigDatasetComponentsComponent],
   providers: [DataFilterService, ApiService, FlowService],
   exports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, BrowserModule, ConfirmacaoComponent, ConfigComponentsModule, KeyValuePipe, NgSelectModule, WbotComponent]
 })
