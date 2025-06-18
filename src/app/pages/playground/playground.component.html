@@ -64,13 +64,8 @@
             <div *ngIf="category.label === 'Preprocessing'">
               <!-- Preprocessing is currently empty -->
             </div>
-
-            
             
           </div>
-        </div>
-        <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-node]="'Load Dataset'" [attr.data-icon]="'fa fa-database'">
-              <i style="margin-right: 8px;" class="fa fa-database"></i><span>Load Dataset</span>
         </div>
       </div>
 
@@ -128,6 +123,10 @@
             
           </div>
         </div>
+
+        <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-node]="'Load Dataset'" [attr.data-icon]="'fa fa-database'" [attr.data-category]="static_data">
+              <i style="margin-right: 8px;" class="fa fa-database"></i><span>Load Dataset</span>
+        </div>
       </div>
 
       
@@ -178,6 +177,9 @@
             </div>
             
           </div>
+        </div>
+        <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-node]="'Load Dataset'" [attr.data-icon]="'fa fa-database'" [attr.data-category]="time_series">
+              <i style="margin-right: 8px;" class="fa fa-database"></i><span>Load Dataset</span>
         </div>
       </div>
 

@@ -78,4 +78,17 @@ export class ApiService {
             return throwError(() => new Error('Invalid category provided'))
         }
     }
+
+    getDatasets( _category: string) {
+        if (_category == 'static_data')
+            return this._http.get(environment.urlApi + "/static_data/datasets")
+        if (_category == 'time_series')
+            return this._http.get(environment.urlApi + "/time_series/datasets")
+        if (_category == 'federated_data')
+            return this._http.get(environment.urlApi + "/federated_data/datasets")
+        else {
+            // Handle invalid category here, for example, throw an error
+            return throwError(() => new Error('Invalid category provided'))
+        }
+    }
 }
