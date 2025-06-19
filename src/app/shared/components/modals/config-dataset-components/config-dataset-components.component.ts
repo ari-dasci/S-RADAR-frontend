@@ -44,7 +44,7 @@ export class ConfigDatasetComponentsComponent {
       var optionSelected = JSON.parse(savedParams);
       console.log('Loaded Params from Local Storage:', optionSelected);
 
-      this._apiservice.getDatasets(this.itemSelected.data.category).subscribe((data: any) => {
+      this._apiservice.getDatasets(this.itemSelected.data.data.category).subscribe((data: any) => {
         this.itemSelectedParams = data;
 
         //Load the optionSelected into the formDataset
@@ -68,9 +68,8 @@ export class ConfigDatasetComponentsComponent {
 
   buildForms() {
 
-    console.log('Fetching parameters for:', this.itemSelected);
     //Fetch parameters from the API (Datasets in that category)
-    this._apiservice.getDatasets(this.itemSelected.data.category).subscribe((data: any) => {
+    this._apiservice.getDatasets(this.itemSelected.data.data.category).subscribe((data: any) => {
       this.itemSelectedParams = data;
       console.log(this.itemSelectedParams);
 

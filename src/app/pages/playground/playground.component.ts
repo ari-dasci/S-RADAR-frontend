@@ -19,6 +19,9 @@ import { ConfigDatasetComponentsComponent } from '../../shared/components/modals
 })
 export class PlaygroundComponent implements OnInit {
 
+  playground_nodes: any[] = [];
+  playground_connections: any[] = [];
+
   //Typenames
   federated_data: string = 'federated_data';
   static_data: string = 'static_data';
@@ -316,10 +319,20 @@ export class PlaygroundComponent implements OnInit {
     // Events!
     this.editor.on('nodeCreated', (id: any) => {
       console.log('Editor Event :>> Node created ' + id, this.editor.getNodeFromId(id));
+      
     });
 
     this.editor.on('nodeRemoved', (id: any) => {
       console.log('Editor Event :>> Node removed ' + id);
+      // Remove node info from list of nodes (playground_nodes)
+      this.playground_nodes = this.playground_nodes.filter(node => node.id_drawflow !== id);
+      console.log('Playground nodes after removal: ', this.playground_nodes);
+
+      //Remove connection info from list of connections if node is present in the connection (playground_connections)
+      this.playground_connections = this.playground_connections.filter(
+        conn => !(conn.output_id === id || conn.input_id === id));
+    
+      console.log('Playground connections after removal: ', this.playground_connections);
     });
 
     this.editor.on('nodeSelected', (id: any) => {
@@ -360,10 +373,19 @@ export class PlaygroundComponent implements OnInit {
 
     this.editor.on('connectionCreated', (connection: any) => {
       console.log('Editor Event :>> Connection created ', connection);
+      this.playground_connections.push(connection);
+      
+      console.log('Playground connections: ', this.playground_connections);
+
     });
 
     this.editor.on('connectionRemoved', (connection: any) => {
       console.log('Editor Event :>> Connection removed ', connection);
+      
+      //Remove connection info from list of connections (playground_connections)
+      this.playground_connections = this.playground_connections.filter(conn => !(conn.output_id === connection.output_id && conn.input_id === connection.input_id));
+      
+      console.log('Playground connections after removal: ', this.playground_connections);
     });
 
     this.editor.on('contextmenu', (e: any) => {
@@ -503,40 +525,15 @@ export class PlaygroundComponent implements OnInit {
         html = `<div class="title-box"><i class="${this.getIconClass(name as TypeComponent)}"></i> <span>${keyFromName}</span></div>`;
         this.editor.addNode(name, 1, 1, pos_x, pos_y, name, { "html": "Your ask...", "acoes": [{ "rotulo": "Sim", "value": "sim" }, { "rotulo": "Não", "value": "nao" }] }, html);
         break;
-      case 'Anotation':
-        var Anotation = `
-        <div>
-          <div class="title-box">👏 Welcome!!</div>
-          <div class="box">
-            <p>Simple flow library <b>demo</b>
-            <a href="https://github.com/jerosoler/Drawflow" target="_blank">Drawflow</a> by <b>Jero Soler</b></p><br>
-    
-            <p>Multiple input / outputs<br>
-               Data sync nodes<br>
-               Import / export<br>
-               Modules support<br>
-               Simple use<br>
-               Type: Fixed or Edit<br>
-               Events: view console<br>
-               Pure Javascript<br>
-            </p>
-            <br>
-            <p><b><u>Shortkeys:</u></b></p>
-            <p>🎹 <b>Delete</b> for remove selected<br>
-            💠 Mouse Left Click == Move<br>
-            ❌ Mouse Right == Delete Option<br>
-            🔍 Ctrl + Wheel == Zoom<br>
-            📱 Mobile support<br>
-            ...</p>
-          </div>
-        </div>
-        `;
-        this.editor.addNode('Anotation', 0, 0, pos_x, pos_y, 'Anotation', {}, Anotation);
-        break;
+
       default:
         if (name) {
           html = `<div class="title-box"><i class="${icon}"></i> <span>${name}</span></div>`;
-          this.editor.addNode(name, 1, 1, pos_x, pos_y, name, { category }, html);
+          var data = {"id_drawflow": -1, "category": category, "op_type":  name};
+          const nodeId = this.editor.addNode(name, 1, 1, pos_x, pos_y, name, { data }, html);
+          data.id_drawflow = nodeId;
+          this.playground_nodes.push(data);
+          console.log('Playground nodes: ', this.playground_nodes);
         }
     }
 
@@ -544,13 +541,6 @@ export class PlaygroundComponent implements OnInit {
   }
 
   async export() {
-    // var nameModule = this.editor.changeModule('NovoNome');
-
-    // this.editor.addModule('nameNewModule');
-    // this.editor.changeModule('nameNewModule');
-    // this.editor.removeModule('nameModule');
-    // // Default Module is Home
-    // this.editor.changeModule('Home');
 
     const html = JSON.stringify(this.editor.export(), null, 4)
 
@@ -565,13 +555,37 @@ export class PlaygroundComponent implements OnInit {
 
   async runTest() {
 
-    const modalRef = this.modalService.open(WbotComponent, {
+    /*const modalRef = this.modalService.open(WbotComponent, {
       centered: true,
       backdrop: 'static'
     });
 
     const html = JSON.stringify(this.editor.export(), null, 4)
-    await this.flowService.startFromNode(html);
+    await this.flowService.startFromNode(html);*/
+
+    //Parse the node graphs (nodes and connections)
+    
+    this.playground_nodes.forEach(node => {
+      console.log(node); // Each node object
+    });
+
+    const nodesJson = {
+      nodes: this.playground_nodes.map(node => ({
+        id: node.id_drawflow,
+        category: node.category,
+        op_type: node.op_type
+      }))
+    };
+    console.log(JSON.stringify(nodesJson, null, 2));
+
+    const connectionsJson = {
+      edges: this.playground_connections.map(conn => ({
+        source: conn.output_id,
+        target: conn.input_id
+      }))
+    };
+    console.log(JSON.stringify(connectionsJson, null, 2));
+
   }
 
   save() {
