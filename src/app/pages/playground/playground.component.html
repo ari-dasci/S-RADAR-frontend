@@ -51,7 +51,7 @@
                 <i style="margin-right: 8px;" class="{{algorithm.icon}}"></i><span>{{algorithm.label}}</span>
                 <div *ngIf="algorithm.expanded">
                   <div *ngFor="let item of algorithm.items">
-                    <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-node]="item" [attr.data-category]="federated_data" [attr.data-icon]="'fa fa-calculator'">
+                    <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-model]="item" [attr.data-node]="'Model Setup'" [attr.data-category]="federated_data" [attr.data-icon]="'fa fa-calculator'">
                       <i style="margin-right: 8px;" class="fa fa-calculator"></i><span>{{item}}</span>
                     </div>
                   </div>
@@ -107,7 +107,7 @@
                 <i style="margin-right: 8px;" class="{{algorithm.icon}}"></i><span>{{algorithm.label}}</span>
                 <div *ngIf="algorithm.expanded">
                   <div *ngFor="let item of algorithm.items">
-                    <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-node]="item" [attr.data-category]="static_data">
+                    <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-model]="item" [attr.data-node]="'Model Setup'" [attr.data-category]="static_data" [attr.data-icon]="'fa fa-calculator'">
                       <i style="margin-right: 8px;" class="fa fa-calculator"></i><span>{{item}}</span>
                     </div>
                   </div>
@@ -162,8 +162,8 @@
                 <i style="margin-right: 8px;" class="{{algorithm.icon}}"></i><span>{{algorithm.label}}</span>
                 <div *ngIf="algorithm.expanded">
                   <div *ngFor="let item of algorithm.items">
-                    <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-node]="item" [attr.data-category]="time_series">
-                      <i style="margin-right: 8px;" class="fa-solid fa-calculator"></i><span>{{item}}</span>
+                    <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-model]="item" [attr.data-node]="'Model Setup'" [attr.data-category]="time_series" [attr.data-icon]="'fa fa-calculator'">
+                      <i style="margin-right: 8px;" class="fa fa-calculator"></i><span>{{item}}</span>
                     </div>
                   </div>
                 </div>

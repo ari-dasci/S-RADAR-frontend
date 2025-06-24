@@ -73,7 +73,7 @@ export class ConfigComponentsComponent implements OnInit {
 
     console.log('Fetching parameters for:', this.itemSelected);
     //Fetch parameters from the API (Static Data)
-    this._apiservice.getParams(this.itemSelected.name, this.itemSelected.data.category).subscribe((data: any) => {
+    this._apiservice.getParams(this.itemSelected.data.data.model, this.itemSelected.data.data.category).subscribe((data: any) => {
       this.itemSelectedParams = data;
       console.log(this.itemSelectedParams);
 
@@ -87,8 +87,12 @@ export class ConfigComponentsComponent implements OnInit {
         }
       }
 
-      // Fill the form with the data from itemSelected (default values)
-      //this.fillFormGeral();
+      // Save parameters to local storage with a node-specific key
+      var formData = this.formGeral.value;
+      const kwargs = { ...formData };
+      const nodeKey = `savedParams_${this.itemSelected.id}`;
+      localStorage.setItem(nodeKey, JSON.stringify(kwargs));
+
     }, error => {
       console.error('Error fetching parameters:', error);
     });
@@ -105,7 +109,7 @@ export class ConfigComponentsComponent implements OnInit {
     console.log('Kwargs:', kwargs);
 
     // Save parameters with the API
-    this._apiservice.setParams(kwargs, this.itemSelected.data.category).subscribe((data: any) => {
+    this._apiservice.setParams(kwargs, this.itemSelected.data.data.category).subscribe((data: any) => {
 
       this.updateItem()
       this.sharedDataService.updateSelectedItem(this.itemSelected); 

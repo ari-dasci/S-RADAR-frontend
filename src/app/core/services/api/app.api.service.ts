@@ -91,4 +91,8 @@ export class ApiService {
             return throwError(() => new Error('Invalid category provided'))
         }
     }
+
+    run_pipeline(_json: string) {
+        return this._http.post(environment.urlApi + "/pipelines/run_pipeline", _json);
+    }
 }

@@ -469,6 +469,7 @@ export class PlaygroundComponent implements OnInit {
       this.selectedNode = ev.target.closest(".drag-drawflow").getAttribute('data-node');
     } else {
       ev.dataTransfer.setData("node", ev.target.getAttribute('data-node'));
+      ev.dataTransfer.setData("model", ev.target.getAttribute('data-model'));
       ev.dataTransfer.setData("category", ev.target.getAttribute('data-category'));
       ev.dataTransfer.setData("icon", ev.target.getAttribute('data-icon'));
     }
@@ -485,13 +486,14 @@ export class PlaygroundComponent implements OnInit {
       ev.preventDefault();
       var data = ev.dataTransfer.getData("node");
       var category = ev.dataTransfer.getData("category");
+      var model = ev.dataTransfer.getData("model");
       var icon = ev.dataTransfer.getData("icon");
       console.log('Drop data: ', data, category, icon);
-      this.addNodeToDrawFlow(data, category, icon,  ev.clientX, ev.clientY);
+      this.addNodeToDrawFlow(data, category, model, icon, ev.clientX, ev.clientY);
     }
   }
 
-  private addNodeToDrawFlow(name: string, category:string, icon: string, pos_x: number, pos_y: number): false | true {
+  private addNodeToDrawFlow(name: string, category:string, model:string,  icon: string, pos_x: number, pos_y: number): false | true {
     if (this.editor.editor_mode === 'fixed') {
       return false;
     }
@@ -528,10 +530,18 @@ export class PlaygroundComponent implements OnInit {
 
       default:
         if (name) {
-          html = `<div class="title-box"><i class="${icon}"></i> <span>${name}</span></div>`;
-          var data = {"id_drawflow": -1, "category": category, "op_type":  name};
+          if(model == "null")
+            html = `<div class="title-box"><i class="${icon}"></i> <span>${name}</span></div>`;
+          else
+            html = `<div class="title-box"><i class="${icon}"></i> <span>${model}</span></div>`;
+
+          var data = {"id_drawflow": -1, "category": category, "op_type":  name, "model": model, "params": {}};
           const nodeId = this.editor.addNode(name, 1, 1, pos_x, pos_y, name, { data }, html);
           data.id_drawflow = nodeId;
+
+          
+
+          
           this.playground_nodes.push(data);
           console.log('Playground nodes: ', this.playground_nodes);
         }
@@ -554,17 +564,20 @@ export class PlaygroundComponent implements OnInit {
   }
 
   async runTest() {
-
-    /*const modalRef = this.modalService.open(WbotComponent, {
-      centered: true,
-      backdrop: 'static'
+    //Node params have not been updated, get that information
+    this.playground_nodes.forEach(node => {
+      const nodeKey = `savedParams_${node.id_drawflow}`;
+      const savedParams = localStorage.getItem(nodeKey);
+      this.playground_nodes = this.playground_nodes.map(n => {
+        if (n.id_drawflow === node.id_drawflow && savedParams) {
+          return { ...n, params: JSON.parse(savedParams) };
+        }
+        return n;
+      });
+      console.log('Test: Updated playground_nodes:', this.playground_nodes);
     });
 
-    const html = JSON.stringify(this.editor.export(), null, 4)
-    await this.flowService.startFromNode(html);*/
-
     //Parse the node graphs (nodes and connections)
-    
     this.playground_nodes.forEach(node => {
       console.log(node); // Each node object
     });
@@ -573,18 +586,24 @@ export class PlaygroundComponent implements OnInit {
       nodes: this.playground_nodes.map(node => ({
         id: node.id_drawflow,
         category: node.category,
-        op_type: node.op_type
-      }))
-    };
-    console.log(JSON.stringify(nodesJson, null, 2));
+        op_type: node.op_type,
+        params: node.params
+      })),
 
-    const connectionsJson = {
       edges: this.playground_connections.map(conn => ({
         source: conn.output_id,
         target: conn.input_id
       }))
     };
-    console.log(JSON.stringify(connectionsJson, null, 2));
+    console.log(JSON.stringify(nodesJson, null, 2));
+
+    this._apiservice.run_pipeline(JSON.stringify(nodesJson, null, 2)).subscribe((data: any) => { 
+
+    }, (error: { detail: any; error: { detail: any; }; }) => {
+      console.log(error)
+      const errorMessage = error.detail || error.error?.detail || 'An unexpected error occurred.';
+      alert('Error fetching parameters: ' + errorMessage);
+    });
 
   }
 

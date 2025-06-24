@@ -13,8 +13,9 @@
         <div class="form-group">
 
           <!-- Dynamically generate form fields -->
+        <label>Dataset name</label>
         <select class="form-control" formControlName="datasetSelected" placeholder="Select a dataset">
-            <option *ngFor="let param of itemSelectedParams | keyvalue" [value]="param.key">
+            <option *ngFor="let param of itemSelectedParams | keyvalue" [value]="param.value">
             {{ param.value }}
             </option>
         </select>

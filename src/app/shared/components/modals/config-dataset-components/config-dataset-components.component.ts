@@ -73,10 +73,23 @@ export class ConfigDatasetComponentsComponent {
       this.itemSelectedParams = data;
       console.log(this.itemSelectedParams);
 
+      var defaultDataset = '';
+      if(this.itemSelected.data.data.category === 'static_data') {
+        defaultDataset = 'kddcup99'; // Default dataset for static data category
+      } else if(this.itemSelected.data.data.category === 'time_series') {
+        defaultDataset = 'individual_household_electric_power_consumption'; // Default dataset for time series category
+      }
       // Initialize formDataset
       this.formDataset = this.fb.group({
-        datasetSelected: ['1']
+        datasetSelected: [defaultDataset]
       });
+
+      // Save parameters to local storage with a node-specific key
+      const formData = this.formDataset.value;
+      const nodeKey = `savedParams_${this.itemSelected.id}`;
+      localStorage.setItem(nodeKey, JSON.stringify({
+        dataset: formData.datasetSelected
+      }));
 
 
     }, error => {
@@ -98,7 +111,9 @@ export class ConfigDatasetComponentsComponent {
 
     // Save parameters to local storage with a node-specific key
     const nodeKey = `savedParams_${this.itemSelected.id}`;
-    localStorage.setItem(nodeKey, JSON.stringify(formData.datasetSelected));
+    localStorage.setItem(nodeKey, JSON.stringify({
+      dataset: formData.datasetSelected
+    }));
 
     // Show a confirmation alert
     alert('Parameters saved successfully!');
