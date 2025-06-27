@@ -33,12 +33,14 @@ export class PlaygroundComponent implements OnInit {
     { label: 'Preprocessing', icon: 'fa fa-cogs', expanded: false },
   ];
   staticdata_algorithms: { label: string, icon: string, items: any, expanded: boolean }[] = [];
+  preprocessing_static: { label: string}[] = []
 
   timeseries_categories: { label: string, icon: string, expanded: boolean }[] = [
     { label: 'Algorithms', icon: 'fa fa-cogs', expanded: false },
     { label: 'Preprocessing', icon: 'fa fa-cogs', expanded: false },
   ];
   timeseries_algorithms: { label: string, icon: string, items: any, expanded: boolean }[] = [];
+  preprocessing_ts: { label: string}[] = []
 
   federated_categories: { label: string, icon: string, expanded: boolean }[] = [
     { label: 'Algorithms', icon: 'fa fa-cogs', expanded: false },
@@ -103,7 +105,9 @@ export class PlaygroundComponent implements OnInit {
   ngOnInit() {
     //this.getData();
     this.getAlgorithms('static_data');
+    this.getPreprocessing('static_data');
     this.getAlgorithms('time_series');
+    this.getPreprocessing('time_series');
     this.getAlgorithms('federated_data');
   }
 
@@ -157,29 +161,34 @@ export class PlaygroundComponent implements OnInit {
     }
   }
 
-  // getCategories(_type: string) {
-  //   this._apiservice.getCategories(_type)
-  //   .subscribe(
-  //     (response: any) => {
-  //       if (_type == 'static_data') {
-  //         const categories: any[] = Object.keys(response).map(key => response[key]);
-  //         const formattedCategories = categories.map((element: string) => element.charAt(0).toUpperCase() + element.slice(1));
-  //         categories.forEach(element => {
-  //           this.staticdata_categories.push( {
-  //             label: element.charAt(0).toUpperCase() + element.slice(1),
-  //             icon: 'pi pi-fw pi-calculator',
-  //             expanded: false,
-  //           })
-  //         })
-  //         console.log(formattedCategories);
-  //       }
+  getPreprocessing(_category: string) { 
+    // Make sure getPreprocessing exists in ApiService, or replace with the correct method name
+    this._apiservice.getPreprocessing(_category)
+      .subscribe(
+        (response: any) => {
+          if (_category == 'static_data') {
+            const preprocessing: any[] = response;
+            preprocessing.forEach(element => {
+              this.preprocessing_static.push({
+                label: element
+              });
+            });
+          }
+          if (_category == 'time_series') {
+            const preprocessing: any[] = response;
+            preprocessing.forEach(element => {
+              this.preprocessing_ts.push({
+                label: element
+              });
+            });
+          }
+        },
+        (error: any) => {
+          console.error('Error fetching data:', error);
+        }
+      );
 
-  //     },
-  //     (error) => {
-  //       console.error('Error fetching data:', error);
-  //     }
-  //   );
-  // }
+  }
   
   getAlgorithms(_category: string) {
     this._apiservice.getAlgorithms(_category)

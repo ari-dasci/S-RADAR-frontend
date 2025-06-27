@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR"  data-bs-theme="light">
+<html lang="pt-BR" data-bs-theme="light">
 
 <head>
   <meta charset="UTF-8">
@@ -20,117 +20,136 @@
   </header>
   <div class="wrapper">
     <div class="col">
-      <div class="drag-drawflow drag-bars" [attr.data-node]="toggleableFederated ? 'expanded' : ''" (click)="toggleableFederated = !toggleableFederated">
+      <div class="drag-drawflow drag-bars" [attr.data-node]="toggleableFederated ? 'expanded' : ''"
+        (click)="toggleableFederated = !toggleableFederated">
         <i class="fa fa-bars" aria-hidden="true"></i>
         <span> Federated Data</span>
       </div>
       <div *ngIf="toggleableFederated">
         <!-- Static categories -->
         <div *ngFor="let category of federated_categories" (click)="toggleItem(category)">
-          
+
           <div class="drag-drawflow drag-bars" [attr.data-node]="category.label">
             <i style="margin-right: 8px;" class="{{category.icon}}"></i><span>{{category.label}}</span>
-      
-          <!-- Load algorithms dynamically only for the 'Algorithms' category -->
-          <div *ngIf="category.label === 'Algorithms' && category.expanded">
 
-            <!-- Load algorithms base module OPERATIONS -->
-            <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" >
-              <i style="margin-right: 8px;" class="fa fa-robot"></i><span>fit()</span>
-            </div>
-            <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)">
-              <i style="margin-right: 8px;" class="fa fa-robot"></i><span>predict()</span>
-            </div>
-            <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)">
-              <i style="margin-right: 8px;" class="fa fa-robot"></i><span>decision_function()</span>
-            </div>
+            <!-- Load algorithms dynamically only for the 'Algorithms' category -->
+            <div *ngIf="category.label === 'Algorithms' && category.expanded">
 
-            <!-- Load algorithms -->
-            <div *ngFor="let algorithm of federated_algorithms" (click)="toggleAlgorithm(algorithm, $event)">
-              <div class="drag-drawflow drag-bars" [attr.data-node]="algorithm.label">
-                <i style="margin-right: 8px;" class="{{algorithm.icon}}"></i><span>{{algorithm.label}}</span>
-                <div *ngIf="algorithm.expanded">
-                  <div *ngFor="let item of algorithm.items">
-                    <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-model]="item" [attr.data-node]="'Model Setup'" [attr.data-category]="federated_data" [attr.data-icon]="'fa fa-calculator'">
-                      <i style="margin-right: 8px;" class="fa fa-calculator"></i><span>{{item}}</span>
+              <!-- Load algorithms base module OPERATIONS -->
+              <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-model]="'fit()'"
+                [attr.data-node]="'Fit Model'" [attr.data-category]="federated_data" [attr.data-icon]="'fa fa-robot'">
+                <i style="margin-right: 8px;" class="fa fa-robot"></i><span>fit()</span>
+              </div>
+              <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-model]="'predict()'"
+                [attr.data-node]="'Predict Model'" [attr.data-category]="federated_data"
+                [attr.data-icon]="'fa fa-robot'">
+                <i style="margin-right: 8px;" class="fa fa-robot"></i><span>predict()</span>
+              </div>
+              <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)"
+                [attr.data-model]="'decision_function()'" [attr.data-node]="'Decision Function Model'"
+                [attr.data-category]="federated_data" [attr.data-icon]="'fa fa-robot'">
+                <i style="margin-right: 8px;" class="fa fa-robot"></i><span>decision_function()</span>
+              </div>
+
+              <!-- Load algorithms -->
+              <div *ngFor="let algorithm of federated_algorithms" (click)="toggleAlgorithm(algorithm, $event)">
+                <div class="drag-drawflow drag-bars" [attr.data-node]="algorithm.label">
+                  <i style="margin-right: 8px;" class="{{algorithm.icon}}"></i><span>{{algorithm.label}}</span>
+                  <div *ngIf="algorithm.expanded">
+                    <div *ngFor="let item of algorithm.items">
+                      <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-model]="item"
+                        [attr.data-node]="'Model Setup'" [attr.data-category]="federated_data"
+                        [attr.data-icon]="'fa fa-calculator'">
+                        <i style="margin-right: 8px;" class="fa fa-calculator"></i><span>{{item}}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-      
-            <!-- Empty content for 'Preprocessing' category, you can add content later -->
-            <div *ngIf="category.label === 'Preprocessing'">
-              <!-- Preprocessing is currently empty -->
-            </div>
-            
+
           </div>
         </div>
       </div>
 
 
 
-      <div class="drag-drawflow drag-bars" [attr.data-node]="toggleableStatic ? 'expanded' : ''" (click)="toggleableStatic = !toggleableStatic">
+      <div class="drag-drawflow drag-bars" [attr.data-node]="toggleableStatic ? 'expanded' : ''"
+        (click)="toggleableStatic = !toggleableStatic">
         <i class="fa fa-bars" aria-hidden="true"></i>
         <span> Static Data</span>
       </div>
 
       <div *ngIf="toggleableStatic">
 
-        
+
         <!-- Static categories -->
         <div *ngFor="let category of staticdata_categories" (click)="toggleItem(category)">
 
-       
+
           <div class="drag-drawflow drag-bars" [attr.data-node]="category.label">
             <i style="margin-right: 8px;" class="{{category.icon}}"></i><span>{{category.label}}</span>
-      
-           <!-- Load algorithms dynamically only for the 'Algorithms' category -->
-          <div *ngIf="category.label === 'Algorithms' && category.expanded">
+
+            <!-- Load algorithms dynamically only for the 'Algorithms' category -->
+            <div *ngIf="category.label === 'Algorithms' && category.expanded">
 
 
-            <!-- Load algorithms base module OPERATIONS -->
-            <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" >
-              <i style="margin-right: 8px;" class="fa fa-robot"></i><span>fit()</span>
-            </div>
-            <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)">
-              <i style="margin-right: 8px;" class="fa fa-robot"></i><span>predict()</span>
-            </div>
-            <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)">
-              <i style="margin-right: 8px;" class="fa fa-robot"></i><span>decision_function()</span>
-            </div>
-          
+              <!-- Load algorithms base module OPERATIONS -->
+              <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-model]="'fit()'"
+                [attr.data-node]="'Fit Model'" [attr.data-category]="static_data" [attr.data-icon]="'fa fa-robot'">
+                <i style="margin-right: 8px;" class="fa fa-robot"></i><span>fit()</span>
+              </div>
+              <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-model]="'predict()'"
+                [attr.data-node]="'Predict Model'" [attr.data-category]="static_data" [attr.data-icon]="'fa fa-robot'">
+                <i style="margin-right: 8px;" class="fa fa-robot"></i><span>predict()</span>
+              </div>
+              <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)"
+                [attr.data-model]="'decision_function()'" [attr.data-node]="'Decision Function Model'"
+                [attr.data-category]="static_data" [attr.data-icon]="'fa fa-robot'">
+                <i style="margin-right: 8px;" class="fa fa-robot"></i><span>decision_function()</span>
+              </div>
 
-            <div *ngFor="let algorithm of staticdata_algorithms" (click)="toggleAlgorithm(algorithm, $event)">
-              <div class="drag-drawflow drag-bars" [attr.data-node]="algorithm.label">
-                <i style="margin-right: 8px;" class="{{algorithm.icon}}"></i><span>{{algorithm.label}}</span>
-                <div *ngIf="algorithm.expanded">
-                  <div *ngFor="let item of algorithm.items">
-                    <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-model]="item" [attr.data-node]="'Model Setup'" [attr.data-category]="static_data" [attr.data-icon]="'fa fa-calculator'">
-                      <i style="margin-right: 8px;" class="fa fa-calculator"></i><span>{{item}}</span>
+
+              <div *ngFor="let algorithm of staticdata_algorithms" (click)="toggleAlgorithm(algorithm, $event)">
+                <div class="drag-drawflow drag-bars" [attr.data-node]="algorithm.label">
+                  <i style="margin-right: 8px;" class="{{algorithm.icon}}"></i><span>{{algorithm.label}}</span>
+                  <div *ngIf="algorithm.expanded">
+                    <div *ngFor="let item of algorithm.items">
+                      <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-model]="item"
+                        [attr.data-node]="'Model Setup'" [attr.data-category]="static_data"
+                        [attr.data-icon]="'fa fa-calculator'">
+                        <i style="margin-right: 8px;" class="fa fa-calculator"></i><span>{{item}}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-      
+
             <!-- Empty content for 'Preprocessing' category, you can add content later -->
-            <div *ngIf="category.label === 'Preprocessing'">
+            <div *ngIf="category.label === 'Preprocessing' && category.expanded">
               <!-- Preprocessing is currently empty -->
+              <div *ngFor="let item of preprocessing_static">
+                <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-model]="item.label"
+                  [attr.data-node]="'Preprocessing'" [attr.data-category]="static_data"
+                  [attr.data-icon]="'fa fa-wrench'">
+                  <i style="margin-right: 8px;" class="fa fa-wrench"></i><span>{{item.label}}</span>
+                </div>
+              </div>
             </div>
-            
+
           </div>
         </div>
 
-        <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-node]="'Load Dataset'" [attr.data-icon]="'fa fa-database'" [attr.data-category]="static_data">
-              <i style="margin-right: 8px;" class="fa fa-database"></i><span>Load Dataset</span>
+        <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-node]="'Load Dataset'"
+          [attr.data-icon]="'fa fa-database'" [attr.data-category]="static_data">
+          <i style="margin-right: 8px;" class="fa fa-database"></i><span>Load Dataset</span>
         </div>
       </div>
 
-      
-      <div class="drag-drawflow drag-bars" [attr.data-node]="toggleableTime ? 'expanded' : ''" (click)="toggleableTime = !toggleableTime">
+
+      <div class="drag-drawflow drag-bars" [attr.data-node]="toggleableTime ? 'expanded' : ''"
+        (click)="toggleableTime = !toggleableTime">
         <i class="fa fa-bars" aria-hidden="true"></i>
         <span> Time Series</span>
       </div>
@@ -138,48 +157,65 @@
 
         <!-- Time Series categories -->
         <div *ngFor="let category of timeseries_categories" (click)="toggleItem(category)">
-          
+
           <div class="drag-drawflow drag-bars" [attr.data-node]="category.label">
             <i style="margin-right: 8px;" class="{{category.icon}}"></i><span>{{category.label}}</span>
-      
-           <!-- Load algorithms dynamically only for the 'Algorithms' category -->
-          <div *ngIf="category.label === 'Algorithms' && category.expanded">
 
-            
-            <!-- Load algorithms base module OPERATIONS -->
-            <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" >
-              <i style="margin-right: 8px;" class="fa fa-robot"></i><span>fit()</span>
-            </div>
-            <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)">
-              <i style="margin-right: 8px;" class="fa fa-robot"></i><span>predict()</span>
-            </div>
-            <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)">
-              <i style="margin-right: 8px;" class="fa fa-robot"></i><span>decision_function()</span>
-            </div>
+            <!-- Load algorithms dynamically only for the 'Algorithms' category -->
+            <div *ngIf="category.label === 'Algorithms' && category.expanded">
 
-            <div *ngFor="let algorithm of timeseries_algorithms" (click)="toggleAlgorithm(algorithm, $event)">
-              <div class="drag-drawflow drag-bars" [attr.data-node]="algorithm.label">
-                <i style="margin-right: 8px;" class="{{algorithm.icon}}"></i><span>{{algorithm.label}}</span>
-                <div *ngIf="algorithm.expanded">
-                  <div *ngFor="let item of algorithm.items">
-                    <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-model]="item" [attr.data-node]="'Model Setup'" [attr.data-category]="time_series" [attr.data-icon]="'fa fa-calculator'">
-                      <i style="margin-right: 8px;" class="fa fa-calculator"></i><span>{{item}}</span>
+
+              <!-- Load algorithms base module OPERATIONS -->
+              <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-model]="'fit()'"
+                [attr.data-node]="'Fit Model'" [attr.data-category]="time_series" [attr.data-icon]="'fa fa-robot'">
+                <i style="margin-right: 8px;" class="fa fa-robot"></i><span>fit()</span>
+              </div>
+              <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-model]="'predict()'"
+                [attr.data-node]="'Predict Model'" [attr.data-category]="time_series" [attr.data-icon]="'fa fa-robot'">
+                <i style="margin-right: 8px;" class="fa fa-robot"></i><span>predict()</span>
+              </div>
+              <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)"
+                [attr.data-model]="'decision_function()'" [attr.data-node]="'Decision Function Model'"
+                [attr.data-category]="time_series" [attr.data-icon]="'fa fa-robot'">
+                <i style="margin-right: 8px;" class="fa fa-robot"></i><span>decision_function()</span>
+              </div>
+
+              <div *ngFor="let algorithm of timeseries_algorithms" (click)="toggleAlgorithm(algorithm, $event)">
+                <div class="drag-drawflow drag-bars" [attr.data-node]="algorithm.label">
+                  <i style="margin-right: 8px;" class="{{algorithm.icon}}"></i><span>{{algorithm.label}}</span>
+                  <div *ngIf="algorithm.expanded">
+                    <div *ngFor="let item of algorithm.items">
+                      <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-model]="item"
+                        [attr.data-node]="'Model Setup'" [attr.data-category]="time_series"
+                        [attr.data-icon]="'fa fa-calculator'">
+                        <i style="margin-right: 8px;" class="fa fa-calculator"></i><span>{{item}}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-      
+
             <!-- Empty content for 'Preprocessing' category, you can add content later -->
             <div *ngIf="category.label === 'Preprocessing'">
-              <!-- Preprocessing is currently empty -->
+              <!-- Empty content for 'Preprocessing' category, you can add content later -->
+              <div *ngIf="category.label === 'Preprocessing' && category.expanded">
+                <!-- Preprocessing is currently empty -->
+                <div *ngFor="let item of preprocessing_ts">
+                  <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-model]="item.label"
+                    [attr.data-node]="'Preprocessing'" [attr.data-category]="time_series"
+                    [attr.data-icon]="'fa fa-wrench'">
+                    <i style="margin-right: 8px;" class="fa fa-wrench"></i><span>{{item.label}}</span>
+                  </div>
+                </div>
+              </div>
             </div>
-            
+
           </div>
         </div>
-        <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-node]="'Load Dataset'" [attr.data-icon]="'fa fa-database'" [attr.data-category]="time_series">
-              <i style="margin-right: 8px;" class="fa fa-database"></i><span>Load Dataset</span>
+        <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-node]="'Load Dataset'"
+          [attr.data-icon]="'fa fa-database'" [attr.data-category]="time_series">
+          <i style="margin-right: 8px;" class="fa fa-database"></i><span>Load Dataset</span>
         </div>
       </div>
 
@@ -199,7 +235,7 @@
             />
           </label>
         </div> -->
-        
+
       </div>
       <div id="drawflow" (drop)="drop($event)" (dragover)="allowDrop($event)">
 

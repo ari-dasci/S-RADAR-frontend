@@ -92,6 +92,17 @@ export class ApiService {
         }
     }
 
+    getPreprocessing(_category: string) {
+        if (_category == 'static_data')
+            return this._http.get(environment.urlApi + "/static_data/preprocessing")
+        if (_category == 'time_series')
+            return this._http.get(environment.urlApi + "/time_series/preprocessing")
+        else {
+            // Handle invalid category here, for example, throw an error
+            return throwError(() => new Error('Invalid category provided'))
+        }
+    }
+
     run_pipeline(_json: string) {
         return this._http.post(environment.urlApi + "/pipelines/run_pipeline", _json);
     }
