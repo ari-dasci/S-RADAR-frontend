@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { throwError } from "rxjs";
+import { catchError, throwError } from "rxjs";
 import { environment } from "../../../../environments/environment";
 
 @Injectable({
@@ -104,6 +104,12 @@ export class ApiService {
     }
 
     run_pipeline(_json: string) {
-        return this._http.post(environment.urlApi + "/pipelines/run_pipeline", _json);
+        return this._http.post(environment.urlApi + "/pipelines/run_pipeline", _json).pipe(
+            // Catch and handle errors
+            catchError((error: HttpErrorResponse) => {
+                // You can customize error handling here
+                return throwError(() => new Error(error.message || 'Server error'));
+            })
+        );
     }
 }

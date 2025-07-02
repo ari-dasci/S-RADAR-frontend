@@ -25,7 +25,7 @@ export class PlaygroundComponent implements OnInit {
   //Typenames
   federated_data: string = 'federated_data';
   static_data: string = 'static_data';
-  time_series: string = 'time_series';  
+  time_series: string = 'time_series';
 
   //Model variables
   staticdata_categories: { label: string, icon: string, expanded: boolean }[] = [
@@ -33,18 +33,17 @@ export class PlaygroundComponent implements OnInit {
     { label: 'Preprocessing', icon: 'fa fa-cogs', expanded: false },
   ];
   staticdata_algorithms: { label: string, icon: string, items: any, expanded: boolean }[] = [];
-  preprocessing_static: { label: string}[] = []
+  preprocessing_static: { label: string }[] = []
 
   timeseries_categories: { label: string, icon: string, expanded: boolean }[] = [
     { label: 'Algorithms', icon: 'fa fa-cogs', expanded: false },
     { label: 'Preprocessing', icon: 'fa fa-cogs', expanded: false },
   ];
   timeseries_algorithms: { label: string, icon: string, items: any, expanded: boolean }[] = [];
-  preprocessing_ts: { label: string}[] = []
+  preprocessing_ts: { label: string }[] = []
 
   federated_categories: { label: string, icon: string, expanded: boolean }[] = [
-    { label: 'Algorithms', icon: 'fa fa-cogs', expanded: false },
-    { label: 'Preprocessing', icon: 'fa fa-cogs', expanded: false },
+    { label: 'Algorithms', icon: 'fa fa-cogs', expanded: false }
   ];
   federated_algorithms: { label: string, icon: string, items: any, expanded: boolean }[] = [];
 
@@ -161,7 +160,7 @@ export class PlaygroundComponent implements OnInit {
     }
   }
 
-  getPreprocessing(_category: string) { 
+  getPreprocessing(_category: string) {
     // Make sure getPreprocessing exists in ApiService, or replace with the correct method name
     this._apiservice.getPreprocessing(_category)
       .subscribe(
@@ -189,7 +188,7 @@ export class PlaygroundComponent implements OnInit {
       );
 
   }
-  
+
   getAlgorithms(_category: string) {
     this._apiservice.getAlgorithms(_category)
       .subscribe(
@@ -204,7 +203,7 @@ export class PlaygroundComponent implements OnInit {
                   const formattedAlgorithms = libraryAlgorithms.map((element: string) => element.charAt(0).toUpperCase() + element.slice(1));
                   console.log(formattedAlgorithms);
 
-                  this.staticdata_algorithms.push( {
+                  this.staticdata_algorithms.push({
                     label: element.charAt(0).toUpperCase() + element.slice(1),
                     icon: 'pi pi-fw pi-calculator',
                     items: formattedAlgorithms,
@@ -218,7 +217,7 @@ export class PlaygroundComponent implements OnInit {
                 }
               )
             });
-            
+
           }
           if (_category == 'time_series') {
             const algorithms: any[] = Object.keys(response).map(key => response[key]);
@@ -230,7 +229,7 @@ export class PlaygroundComponent implements OnInit {
                   const formattedAlgorithms = libraryAlgorithms.map((element: string) => element.charAt(0).toUpperCase() + element.slice(1));
                   console.log(formattedAlgorithms);
 
-                  this.timeseries_algorithms.push( {
+                  this.timeseries_algorithms.push({
                     label: element.charAt(0).toUpperCase() + element.slice(1),
                     icon: 'pi pi-fw pi-calculator',
                     items: formattedAlgorithms,
@@ -255,7 +254,7 @@ export class PlaygroundComponent implements OnInit {
                   const formattedAlgorithms = libraryAlgorithms.map((element: string) => element.charAt(0).toUpperCase() + element.slice(1));
                   console.log(formattedAlgorithms);
 
-                  this.federated_algorithms.push( {
+                  this.federated_algorithms.push({
                     label: element.charAt(0).toUpperCase() + element.slice(1),
                     icon: 'pi pi-fw pi-calculator',
                     items: formattedAlgorithms,
@@ -271,12 +270,12 @@ export class PlaygroundComponent implements OnInit {
             });
           }
         },
-        
+
         (error) => {
           console.error('Error fetching data:', error);
         }
       );
-      
+
   }
 
   // ******************************************************************************************************************************//
@@ -328,7 +327,7 @@ export class PlaygroundComponent implements OnInit {
     // Events!
     this.editor.on('nodeCreated', (id: any) => {
       console.log('Editor Event :>> Node created ' + id, this.editor.getNodeFromId(id));
-      
+
     });
 
     this.editor.on('nodeRemoved', (id: any) => {
@@ -340,7 +339,7 @@ export class PlaygroundComponent implements OnInit {
       //Remove connection info from list of connections if node is present in the connection (playground_connections)
       this.playground_connections = this.playground_connections.filter(
         conn => !(conn.output_id === id || conn.input_id === id));
-    
+
       console.log('Playground connections after removal: ', this.playground_connections);
     });
 
@@ -383,17 +382,17 @@ export class PlaygroundComponent implements OnInit {
     this.editor.on('connectionCreated', (connection: any) => {
       console.log('Editor Event :>> Connection created ', connection);
       this.playground_connections.push(connection);
-      
+
       console.log('Playground connections: ', this.playground_connections);
 
     });
 
     this.editor.on('connectionRemoved', (connection: any) => {
       console.log('Editor Event :>> Connection removed ', connection);
-      
+
       //Remove connection info from list of connections (playground_connections)
       this.playground_connections = this.playground_connections.filter(conn => !(conn.output_id === connection.output_id && conn.input_id === connection.input_id));
-      
+
       console.log('Playground connections after removal: ', this.playground_connections);
     });
 
@@ -502,7 +501,7 @@ export class PlaygroundComponent implements OnInit {
     }
   }
 
-  private addNodeToDrawFlow(name: string, category:string, model:string,  icon: string, pos_x: number, pos_y: number): false | true {
+  private addNodeToDrawFlow(name: string, category: string, model: string, icon: string, pos_x: number, pos_y: number): false | true {
     if (this.editor.editor_mode === 'fixed') {
       return false;
     }
@@ -513,47 +512,17 @@ export class PlaygroundComponent implements OnInit {
     var keyFromName = this.getKeyByValue(name, TypeComponent)?.toString();
     let html = '';
 
-    // this.editor.addNode(name, inputs, outputs, posx, posy, class, data, html);
+    if (name) {
+      if (model == "null")
+        html = `<div class="title-box"><i class="${icon}"></i> <span>${name}</span></div>`;
+      else
+        html = `<div class="title-box"><i class="${icon}"></i> <span>${model}</span></div>`;
 
-    switch (name) {
-      case TypeComponent.StartFlow:
-        html = `<div class="title-box"><i class="${this.getIconClass(name as TypeComponent)}"></i> <span>${keyFromName}</span></div>`;
-        this.editor.addNode(name, 0, 1, pos_x, pos_y, name, {}, html);
-        break;
-      case TypeComponent.EndFlow:
-        var endFlow = `
-        <div>
-          <div class="title-box"><i class="fa fa-circle"></i> endFlow</div>
-        </div>
-        `;
-        this.editor.addNode('endFlow', 1, 0, pos_x, pos_y, 'endFlow', {}, endFlow);
-        break;
-      case TypeComponent.SendMessage:
-        html = `<div class="title-box"><i class="${this.getIconClass(name as TypeComponent)}"></i> <span>${keyFromName}</span></div>`;
-        this.editor.addNode(name, 1, 1, pos_x, pos_y, name, { "html": "Your text...", "acoes": [] }, html);
-        break;
-      case TypeComponent.Request:
-        html = `<div class="title-box"><i class="${this.getIconClass(name as TypeComponent)}"></i> <span>${keyFromName}</span></div>`;
-        this.editor.addNode(name, 1, 1, pos_x, pos_y, name, { "html": "Your ask...", "acoes": [{ "rotulo": "Sim", "value": "sim" }, { "rotulo": "Não", "value": "nao" }] }, html);
-        break;
-
-      default:
-        if (name) {
-          if(model == "null")
-            html = `<div class="title-box"><i class="${icon}"></i> <span>${name}</span></div>`;
-          else
-            html = `<div class="title-box"><i class="${icon}"></i> <span>${model}</span></div>`;
-
-          var data = {"id_drawflow": -1, "category": category, "op_type":  name, "model": model, "params": {}};
-          const nodeId = this.editor.addNode(name, 1, 1, pos_x, pos_y, name, { data }, html);
-          data.id_drawflow = nodeId;
-
-          
-
-          
-          this.playground_nodes.push(data);
-          console.log('Playground nodes: ', this.playground_nodes);
-        }
+      var data = { "id_drawflow": -1, "category": category, "op_type": name, "model": model, "params": {} };
+      const nodeId = this.editor.addNode(name, 1, 1, pos_x, pos_y, name, { data }, html);
+      data.id_drawflow = nodeId;
+      this.playground_nodes.push(data);
+      console.log('Playground nodes: ', this.playground_nodes);
     }
 
     return true;
@@ -596,6 +565,7 @@ export class PlaygroundComponent implements OnInit {
         id: node.id_drawflow,
         category: node.category,
         op_type: node.op_type,
+        model: node.model,
         params: node.params
       })),
 
@@ -606,7 +576,7 @@ export class PlaygroundComponent implements OnInit {
     };
     console.log(JSON.stringify(nodesJson, null, 2));
 
-    this._apiservice.run_pipeline(JSON.stringify(nodesJson, null, 2)).subscribe((data: any) => { 
+    this._apiservice.run_pipeline(JSON.stringify(nodesJson, null, 2)).subscribe((data: any) => {
 
     }, (error: { detail: any; error: { detail: any; }; }) => {
       console.log(error)
@@ -657,25 +627,19 @@ export class PlaygroundComponent implements OnInit {
 
   private openModalConfig() {
 
-    if (this.selectedNode.name === 'Load Dataset'){
+    //Node types with no modal configuration
+    if (this.selectedNode.name === 'Fit Model' || this.selectedNode.name === 'Preprocessing' || this.selectedNode.name === 'Predict Model' || this.selectedNode.name === 'Decision Function Model') {
+    }
+    else if (this.selectedNode.name === 'Load Dataset') { //Load Dataset modal
       const modalRef = this.modalService.open(ConfigDatasetComponentsComponent, {
         centered: true,
         backdrop: 'static',
         size: 'lg'
       });
-      
-      modalRef.componentInstance.itemSelected = this.selectedNode;
-      let typeComponentSelected = this.selectedNode.class;
 
-      modalRef.componentInstance.confirmarLabel = 'Sim';
-      modalRef.componentInstance.cancelarLabel = 'Não';
-      modalRef.result.then(result => {
-        if (result) {
-          this.updateNameComponentHtml(typeComponentSelected, result.name);
-        }
-      });
+      modalRef.componentInstance.itemSelected = this.selectedNode;
     }
-    else {
+    else { //Modal for every algorithm with configuration
       const modalRef = this.modalService.open(ConfigComponentsComponent, {
         centered: true,
         backdrop: 'static',
@@ -683,15 +647,6 @@ export class PlaygroundComponent implements OnInit {
       });
 
       modalRef.componentInstance.itemSelected = this.selectedNode;
-      let typeComponentSelected = this.selectedNode.class;
-
-      modalRef.componentInstance.confirmarLabel = 'Sim';
-      modalRef.componentInstance.cancelarLabel = 'Não';
-      modalRef.result.then(result => {
-        if (result) {
-          this.updateNameComponentHtml(typeComponentSelected, result.name);
-        }
-      });
 
     }
   }
@@ -711,7 +666,7 @@ export class PlaygroundComponent implements OnInit {
   private hideEditButton() {
     this.editButtonShown = false;
     this.editDivHtml = document.getElementById('editNode')!;
-  
+
     if (this.editDivHtml) {
       this.editDivHtml.remove();
     }
