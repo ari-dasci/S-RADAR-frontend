@@ -11,6 +11,9 @@ import { ApiService } from '../../core/services/api/app.api.service';
 import { Observable } from 'rxjs';
 import { ConfigDatasetComponentsComponent } from '../../shared/components/modals/config-dataset-components/config-dataset-components.component';
 
+import { PlotModalComponent } from '../../shared/components/modals/plot-modal/plot-modal.component';
+
+
 @Component({
   selector: 'playground',
   templateUrl: './playground.component.html',
@@ -114,6 +117,15 @@ export class PlaygroundComponent implements OnInit {
     this.initDrawingBoard();
     this.editor.editor_mode = this.locked != null && this.locked ? 'fixed' : 'edit';
   }
+
+  async openPlotDialog() {
+    const modalVis = this.modalService.open(PlotModalComponent, {
+      centered: true,
+      backdrop: 'static',
+      size: 'lg'
+    });
+  }
+
 
   addNodeInput() {
     this.editor.addNodeInput(this.selectedNodeId.slice(5));
@@ -450,6 +462,7 @@ export class PlaygroundComponent implements OnInit {
       }
     });
   }
+
 
   private dragEvent() {
     var elements = Array.from(document.getElementsByClassName('drag-drawflow'));

@@ -13,6 +13,8 @@ import { FlowService } from './providers/flow.service';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { WbotComponent } from './components/modals/wbot/wbot.component';
 import { ConfigDatasetComponentsComponent } from './components/modals/config-dataset-components/config-dataset-components.component';
+import { PlotModalComponent } from './components/modals/plot-modal/plot-modal.component';
+import { PlotlyModule } from 'angular-plotly.js';
 
 @NgModule({
   imports: [
@@ -21,12 +23,13 @@ import { ConfigDatasetComponentsComponent } from './components/modals/config-dat
     FormsModule,
     ReactiveFormsModule,
     BrowserModule,
+    PlotlyModule,
     NgSelectModule,
-    HttpClientModule
+    HttpClientModule,
   ],
-  declarations: [ConfirmacaoComponent, WbotComponent, ConfigDatasetComponentsComponent],
+  declarations: [ConfirmacaoComponent, WbotComponent, ConfigDatasetComponentsComponent, PlotModalComponent],
   providers: [DataFilterService, ApiService, FlowService],
-  exports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, BrowserModule, ConfirmacaoComponent, ConfigComponentsModule, KeyValuePipe, NgSelectModule, WbotComponent]
+  exports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, BrowserModule, PlotModalComponent, ConfirmacaoComponent, ConfigComponentsModule, KeyValuePipe, NgSelectModule, WbotComponent]
 })
 export class SharedModule {
   static forRoot() {

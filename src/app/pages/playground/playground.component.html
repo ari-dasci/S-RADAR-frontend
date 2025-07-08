@@ -67,7 +67,8 @@
                 </div>
               </div>
             </div>
-
+            
+           <plotly-modal></plotly-modal>
           </div>
         </div>
       </div>
@@ -215,7 +216,7 @@
         </div>
       </div>
 
-      <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)"
+      <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" 
           [attr.data-node]="'Visualization'" [attr.data-icon]="'fa fa-eye'">
           <i style="margin-right: 8px;" class="fa fa-eye"></i><span>Visualization</span>
       </div>
@@ -241,7 +242,7 @@
       <div id="drawflow" (drop)="drop($event)" (dragover)="allowDrop($event)">
 
         <div class="btn-export" (click)="export()">Export</div>
-        <div class="btn-import" (click)="import()">Import</div>
+        <div class="btn-import" (click)="openPlotDialog()">Import</div>
         <div class="btn-test" (click)="runTest()" type="button"> <i class="fa fa-play fa-xs"></i>
           Test</div>
 
