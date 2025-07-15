@@ -65,6 +65,7 @@ export class PlaygroundComponent implements OnInit {
   @Input()
   otherDetails: any;
 
+  isLoading: boolean = false;
   toggleableFederated: boolean = false;
   toggleableStatic: boolean = false;
   toggleableTime: boolean = false;
@@ -94,7 +95,7 @@ export class PlaygroundComponent implements OnInit {
     return icon.get(type) || 'fa fa-pencil'; // Pode definir uma classe padrão se não houver correspondência
   }
 
-  constructor(private _apiservice: ApiService, private modalService: NgbModal, private sharedDataService: SharedDataService, private flowService: FlowService, private renderer: Renderer2, private el: ElementRef) {
+  constructor(private cdRef: ChangeDetectorRef,private _apiservice: ApiService, private modalService: NgbModal, private sharedDataService: SharedDataService, private flowService: FlowService, private renderer: Renderer2, private el: ElementRef) {
     this.sharedDataService.getSelectedItemObservable().subscribe((item) => {
       if (this.selectedNodeId) {
         const id = this.selectedNodeId.slice(5);
@@ -371,6 +372,8 @@ export class PlaygroundComponent implements OnInit {
           this.selectedNodeId = e.target.id;
         }
         this.selectedNode = this.editor.drawflow.drawflow.Home.data[`${this.selectedNodeId.slice(5)}`];
+        console.log('Editor Event :>> Click :>> this.selectedNode :>> ', this.selectedNode);
+        console.log('Editor Event :>> Click :>> this.selectedNodeId :>> ', this.selectedNodeId);
       }
 
       if (e.target.closest('#editNode') != null || e.target.classList[0] === 'edit-node-button') {
@@ -435,10 +438,6 @@ export class PlaygroundComponent implements OnInit {
       console.log('Editor Event :>> Reroute removed ' + id);
     });
 
-    // this.editor.on('mouseMove', (position: any) => {
-    //   console.log('Editor Event :>> Position mouse x:' + position.x + ' y:' + position.y);
-    // });
-
     this.editor.on('nodeMoved', (id: any) => {
       console.log('Editor Event :>> Node moved ' + id);
     });
@@ -457,7 +456,6 @@ export class PlaygroundComponent implements OnInit {
 
     this.editor.container.addEventListener('dblclick', (e: any) => {
       if (e.target.closest(".drawflow_content_node")?.parentElement) {
-        // alert(e.target.closest(".drawflow_content_node").parentElement.id);
         this.openModalConfig();
       }
     });
@@ -468,9 +466,6 @@ export class PlaygroundComponent implements OnInit {
     var elements = Array.from(document.getElementsByClassName('drag-drawflow'));
 
     elements.forEach(element => {
-      // element.addEventListener('touchend', this.drop, false);
-      // element.addEventListener('touchmove', this.positionMobile, false);
-      // element.addEventListener('touchstart', this.drag, false);
       element.addEventListener("dblclick", (event) => { });
 
     });
@@ -498,10 +493,6 @@ export class PlaygroundComponent implements OnInit {
 
   drop(ev: any) {
     if (ev.type === "touchend") {
-      // var parentdrawflow = document.elementFromPoint(this.mobile_last_move.touches[0].clientX, this.mobile_last_move.touches[0].clientY).closest("#drawflow");
-      // if (parentdrawflow != null) {
-      //   addNodeToDrawFlow(this.mobile_item_selec, this.mobile_last_move.touches[0].clientX, this.mobile_last_move.touches[0].clientY);
-      // }
       this.mobile_item_selec = '';
     } else {
       ev.preventDefault();
@@ -555,6 +546,7 @@ export class PlaygroundComponent implements OnInit {
   }
 
   async runTest() {
+    this.isLoading = true;
     //Node params have not been updated, get that information
     this.playground_nodes.forEach(node => {
       const nodeKey = `savedParams_${node.id_drawflow}`;
@@ -589,14 +581,66 @@ export class PlaygroundComponent implements OnInit {
     };
     console.log(JSON.stringify(nodesJson, null, 2));
 
-    this._apiservice.run_pipeline(JSON.stringify(nodesJson, null, 2)).subscribe((data: any) => {
+    
+    this._apiservice.run_pipeline(JSON.stringify(nodesJson, null, 2)).subscribe(
+      (data: any) => {
+        try {
 
-    }, (error: { detail: any; error: { detail: any; }; }) => {
-      console.log(error)
-      const errorMessage = error.detail || error.error?.detail || 'An unexpected error occurred.';
-      alert('Error fetching parameters: ' + errorMessage);
-    });
+          const last_vis = null;
+          const visualizations = data.visualizations;
 
+          // Store visualization for each node in localStorage
+          for (const key in visualizations) {
+            if (visualizations.hasOwnProperty(key)) {
+              const value = JSON.parse(visualizations[key]);
+              console.log('Visualization for node:', key, value);
+
+              // 1. Get possible stored params for the node
+              const finalNodeKey = `savedParams_${key}`;
+              const savedParams = localStorage.getItem(finalNodeKey);
+
+              // 2. If there are saved params, merge them with the new plot data
+              if (savedParams) {
+                const savedParamsObj = JSON.parse(savedParams);
+                savedParamsObj['plot'] = value;
+
+                const kwargs = { ...savedParamsObj };
+                localStorage.setItem(finalNodeKey, JSON.stringify(savedParamsObj));
+
+                console.log('Saving parameters for:', key);
+              }
+
+              //TODO: 3. Load the last Plotly figure into the modal and open it
+              const modalVis = this.modalService.open(PlotModalComponent, {
+                centered: true,
+                backdrop: 'static',
+                size: 'xl'
+              });
+
+              // Assign the parsed Plotly JSON to the modal component
+              modalVis.componentInstance.itemSelected = this.editor.drawflow.drawflow.Home.data[`${key}`];
+              modalVis.componentInstance.graph = value;
+            }
+
+
+          }
+          alert(data.message)
+        } catch (e) {
+          console.error('Failed to parse plot data:', e);
+          alert('Could not parse the plot data returned from the server.');
+        } finally {
+          this.isLoading = false; // END loading
+          this.cdRef.detectChanges();
+        }
+      },
+      (error: { detail: any; error: { detail: any; }; }) => {
+        console.log(error);
+        const errorMessage = error.detail || error.error?.detail || 'An unexpected error occurred.';
+        alert('Error fetching parameters: ' + errorMessage);
+        this.isLoading = false; 
+        this.cdRef.detectChanges();
+      }
+    );
   }
 
   save() {
@@ -651,6 +695,14 @@ export class PlaygroundComponent implements OnInit {
       });
 
       modalRef.componentInstance.itemSelected = this.selectedNode;
+    }
+    else if (this.selectedNode.name === 'Visualization') { //Plot modal
+      const modalVis = this.modalService.open(PlotModalComponent, {
+        centered: true,
+        backdrop: 'static',
+        size: 'xl'
+      });
+      modalVis.componentInstance.itemSelected = this.selectedNode;
     }
     else { //Modal for every algorithm with configuration
       const modalRef = this.modalService.open(ConfigComponentsComponent, {

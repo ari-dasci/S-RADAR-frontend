@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { catchError, throwError } from "rxjs";
+import { catchError, map, Observable, throwError } from "rxjs";
 import { environment } from "../../../../environments/environment";
 
 @Injectable({
@@ -12,7 +12,7 @@ export class ApiService {
 
     }
     getdata() {
-        
+
         return this._http.get(environment.urlApi + '/utils/blocks');
     }
     getCategories(_type: string) {
@@ -66,9 +66,9 @@ export class ApiService {
         }
     }
 
-    setParams(kwargs:string, _category: string) {
+    setParams(kwargs: string, _category: string) {
         if (_category == 'static_data')
-            return this._http.post(environment.urlApi + "/static_data/set_params", kwargs)  
+            return this._http.post(environment.urlApi + "/static_data/set_params", kwargs)
         if (_category == 'time_series')
             return this._http.post(environment.urlApi + "/time_series/set_params", kwargs)
         if (_category == 'federated_data')
@@ -79,7 +79,7 @@ export class ApiService {
         }
     }
 
-    getDatasets( _category: string) {
+    getDatasets(_category: string) {
         if (_category == 'static_data')
             return this._http.get(environment.urlApi + "/static_data/datasets")
         if (_category == 'time_series')
@@ -103,13 +103,21 @@ export class ApiService {
         }
     }
 
-    run_pipeline(_json: string) {
-        return this._http.post(environment.urlApi + "/pipelines/run_pipeline", _json).pipe(
-            // Catch and handle errors
+    run_pipeline(_json: any): Observable<any> {
+        return this._http.post<any>(`${environment.urlApi}/pipelines/run_pipeline`, _json).pipe(
+            map((response) => {
+                // If response is a JSON string (from `fig.to_json()`), parse it
+                try {
+                    return typeof response === 'string' ? JSON.parse(response) : response;
+                } catch (e) {
+                    console.error('Invalid JSON returned by API:', e);
+                    return null;
+                }
+            }),
             catchError((error: HttpErrorResponse) => {
-                // You can customize error handling here
                 return throwError(() => new Error(error.message || 'Server error'));
             })
         );
     }
+
 }

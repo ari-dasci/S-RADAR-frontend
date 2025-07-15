@@ -1,1 +1,57 @@
-<plotly-plot [data]="graph2.data" [layout]="graph2.layout"></plotly-plot>
+<div class="modal-header d-flex justify-content-between align-items-center">
+    <span class="font-weight-bold">Visualization</span>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="cancelar()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <div class="tab-content" id="nav-tabContent">
+        <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <button class="nav-link" id="nav-geral-tab" data-bs-toggle="tab" data-bs-target="#nav-geral"
+                    type="button" role="tab" aria-controls="nav-geral" aria-selected="true">Parameters</button>
+                <button class="nav-link active" id="nav-plot-tab" data-bs-toggle="tab" data-bs-target="#nav-plot"
+                    type="button" role="tab" aria-controls="nav-plot" aria-selected="false">Plot</button>
+            </div>
+        </nav>
+
+        <!-- TAB PARAMETERS -->
+        <div class="tab-pane fade" id="nav-geral">
+            <form *ngIf="formGeral" [formGroup]="formGeral">
+                <div class="formGroup">
+                    <div *ngFor="let field of customFields">
+
+                        <label>{{ field.name }}</label>
+                        <input *ngIf="field.type === 'text'" type="text" [formControlName]="field.name"
+                            [id]="field.name" class="form-control" />
+
+                        <select *ngIf="field.type === 'select'" [formControlName]="field.name" [id]="field.name"
+                            class="form-control">
+                            <option *ngFor="let opt of field.options" [value]="opt">{{ opt }}</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+
+            <div class="modal-footer" >
+                <button type="button" class="btn btn-primary" (click)="save_params()">Save</button>
+            </div>
+        </div>
+
+
+        <!-- TAB PLOT -->
+        <div class="tab-pane fade show active" id="nav-plot">
+            <ng-container *ngIf="graph; else showMessage">
+                <plotly-plot [data]="graph.data" [layout]="graph.layout"></plotly-plot>
+            </ng-container>
+            <ng-template #showMessage>
+                <div class="alert alert-info text-center mt-3">
+                    Please, run <i class="fa fa-play fa-xs"></i> Test to generate the plot.
+                </div>
+            </ng-template>
+        </div>
+
+    </div>
+
+
+</div>

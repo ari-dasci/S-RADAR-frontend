@@ -18,6 +18,14 @@
   <header>
     <h2>S-ADL Playground</h2>
   </header>
+
+
+  <!-- Spinner overlay -->
+  <div class="spinner-overlay" *ngIf="isLoading">
+    <div class="spinner"></div>
+  </div>
+
+
   <div class="wrapper">
     <div class="col">
       <div class="drag-drawflow drag-bars" [attr.data-node]="toggleableFederated ? 'expanded' : ''"
@@ -67,8 +75,7 @@
                 </div>
               </div>
             </div>
-            
-           <plotly-modal></plotly-modal>
+
           </div>
         </div>
       </div>
@@ -216,9 +223,9 @@
         </div>
       </div>
 
-      <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" 
-          [attr.data-node]="'Visualization'" [attr.data-icon]="'fa fa-eye'">
-          <i style="margin-right: 8px;" class="fa fa-eye"></i><span>Visualization</span>
+      <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-node]="'Visualization'"
+        [attr.data-icon]="'fa fa-eye'">
+        <i style="margin-right: 8px;" class="fa fa-eye"></i><span>Visualization</span>
       </div>
 
     </div>
