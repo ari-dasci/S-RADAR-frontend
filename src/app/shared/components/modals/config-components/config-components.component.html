@@ -15,91 +15,23 @@
           <!-- Dynamically generate form fields -->
           <div *ngFor="let control of formGeral.controls | keyvalue">
             <label [for]="control.key">{{ control.key }}</label>
-            <input
-              type="text"
-              class="form-control"
-              [id]="control.key"
-              [formControlName]="control.key"
-              [placeholder]="'Enter ' + control.key"
-            />
+            <div class="position-relative">
+              <input *ngIf="!isReadonly(control.key)" type="text" class="form-control" [id]="control.key" [formControlName]="control.key"
+                [ngClass]="{ 'readonly-input': isReadonly(control.key) }" [placeholder]="'Enter ' + control.key"
+                [readonly]="isReadonly(control.key)" />
+              <!-- Display truncated value as overlay when readonly -->
+              
+              <input *ngIf="isReadonly(control.key)" type="text" class="form-control" [id]="control.key" [value]="toString(control.key)"
+                [ngClass]="{ 'readonly-input': isReadonly(control.key) }" [placeholder]="'Enter ' + control.key"
+                [readonly]="isReadonly(control.key)" />
+            </div>
+
           </div>
         </div>
       </form>
-
-      <!-- <ul class="nav nav-tabs justify-content-end" id="myTab" role="tablist">
-        <li class="nav-item" role="presentation">
-          <a class="nav-link" data-bs-toggle="collapse" href="#inputs" role="tab" aria-expanded="false">
-            Input
-          </a>
-        </li>
-      </ul>
-      <div class="tab-content">
-        <div class="tab-pane fade show active" role="tabpanel">
-          <div class="collapse" id="inputs">
-            <button type="button" class="btn btn-primary" (click)="addInput()"><i class="fa fa-plus"
-                aria-hidden="true"></i>
-              input</button>
-             <div class="card card-body" id="inputList">
-            </div> 
-            <div data-query-inputList></div>
-          </div>
-        </div>
-      </div>
     </div>
 
-    <template data-key-value-template>
-      <div class="input-group my-2" data-key-value-pair>
-        <input type="text" data-key class="form-control" placeholder="Key" />
-        <input type="text" data-value class="form-control" placeholder="Value" />
-        <button type="button" data-remove-btn class="btn btn-outline-danger">Remove</button>
-      </div>
-    </template>-->
-
-    <!-- END TAB GERAL -->
-
-   
-    <!-- TAB PARA CADA COMPONENT -->
-    <ng-container *ngFor="let component of components | keyvalue">
-      <div class="tab-pane fade"
-        *ngIf="itemSelected.class === component.value && component.value !== components.StartFlow"
-        [attr.id]="component.key">
-
-        <!-- TAB PARA Filter -->
-        <ng-container *ngIf="components.Filter === component.value">
-          <div class="form-group">
-            <label>Filter Expression:</label>
-            <textarea class="form-control" rows="1"></textarea>
-            <small class="form-text text-muted"><a href="https://jmespath.org/proposals/filter-expressions.html"
-                target="_blank">JMESPath Expressions</a></small>
-          </div>
-        </ng-container>
-        <!-- END TAB PARA Filter -->
-
-        <!-- TAB PARA SendMessage -->
-        <ng-container *ngIf="components.SendMessage === component.value">
-          <app-tab-send-message [itemSelected]="itemSelected" (sendMessageFormUpdated)="updateParentForm($event)"></app-tab-send-message>
-          <!-- <div class="form-group">
-            <form [formGroup]="formGeral">
-              <label>Template:</label>
-              <textarea class="form-control" rows="3" formControlName="data" id="data"></textarea>
-              <small class="form-text text-muted">{{ 'example: {"html": "Your text...", "acoes":[]}' }}</small>
-            </form>
-          </div> -->
-        </ng-container>
-        <!-- END TAB PARA SendMessage -->
-
-        <!-- TAB PARA CallApi -->
-        <ng-container *ngIf="components.CallApi === component.value">
-          <app-tab-call-api [itemSelected]="itemSelected"></app-tab-call-api>
-        </ng-container>
-        <!-- END TAB PARA CallApi -->
-
-      </div>
-    </ng-container>
-    <!-- END TAB PARA CADA COMPONENT -->
   </div>
-
-</div>
-<div class="modal-footer">
-  <button type="button" class="btn btn-primary" (click)="save_params()">Save</button>
-</div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="save_params()">Save</button>
+  </div>

@@ -28,6 +28,35 @@ export class ConfigComponentsComponent implements OnInit {
   public formGeral: FormGroup;
   itemSelectedParams: any;
 
+  // For each type of data, determine readonly flags and complex parameters to set manually
+  readonlyParamsTs: { [key: string]: boolean } = {
+    'algorithm_': true,
+    'loss': true,
+    'top_module': true,
+    'optimizer': true,
+    'input_shape': true,
+  };
+  complexParamsTs: { [key: string]: string } = {
+    'loss': 'torch.nn.MSELoss()',
+    'top_module': 'topModuleTSFEDL(in_features_topmodule, out_features_topmodule)',
+    'optimizer': 'None',
+    'input_shape': '(126,126)',
+  };
+
+  readonlyParamsStatic: { [key: string]: boolean } = {
+    'algorithm_': true
+  };
+  complexParamsStatic: { [key: string]: string } = {
+  };
+
+  readonlyParamsFederated: { [key: string]: boolean } = {
+    'algorithm_': true,
+  };
+  complexParamsFederated: { [key: string]: string } = {
+  };
+
+
+
   constructor(private _apiservice: ApiService, public activeModal: NgbActiveModal, private fb: FormBuilder, private sharedDataService: SharedDataService, private dataFilterService: DataFilterService
     , private elementRef: ElementRef) {
     this.sharedDataService.getSelectedItemObservable().subscribe((item) => {
@@ -50,15 +79,15 @@ export class ConfigComponentsComponent implements OnInit {
       console.log('Loaded Params from Local Storage:', this.itemSelectedParams);
 
       // Initialize the form with the saved parameters
-        // Initialize formGeral
-        this.formGeral = this.fb.group({});
+      // Initialize formGeral
+      this.formGeral = this.fb.group({});
 
-        // Dynamically add form controls based on itemSelectedParams
-        for (const key in this.itemSelectedParams) {
-          if (this.itemSelectedParams.hasOwnProperty(key)) {
-            this.formGeral.addControl(key, this.fb.control(this.itemSelectedParams[key]));
-          }
+      // Dynamically add form controls based on itemSelectedParams
+      for (const key in this.itemSelectedParams) {
+        if (this.itemSelectedParams.hasOwnProperty(key)) {
+          this.formGeral.addControl(key, this.fb.control(this.itemSelectedParams[key]));
         }
+      }
     } else {
       console.log('No saved parameters found in local storage.');
       this.buildForms();
@@ -70,25 +99,24 @@ export class ConfigComponentsComponent implements OnInit {
   }
 
   buildForms() {
-
     console.log('Fetching parameters for:', this.itemSelected);
-    //Fetch parameters from the API (Static Data)
+
     this._apiservice.getParams(this.itemSelected.data.data.model, this.itemSelected.data.data.category).subscribe((data: any) => {
       this.itemSelectedParams = data;
       console.log(this.itemSelectedParams);
 
-      // Initialize formGeral
       this.formGeral = this.fb.group({});
 
-      // Dynamically add form controls based on itemSelectedParams
       for (const key in this.itemSelectedParams) {
         if (this.itemSelectedParams.hasOwnProperty(key)) {
-          this.formGeral.addControl(key, this.fb.control(this.itemSelectedParams[key]));
+          const value = this.itemSelectedParams[key];
+
+          this.formGeral.addControl(key, this.fb.control(value));
         }
       }
 
       // Save parameters to local storage with a node-specific key
-      var formData = this.formGeral.value;
+      const formData = this.formGeral.value;
       const kwargs = { ...formData };
       const nodeKey = `savedParams_${this.itemSelected.id}`;
       localStorage.setItem(nodeKey, JSON.stringify(kwargs));
@@ -99,20 +127,27 @@ export class ConfigComponentsComponent implements OnInit {
   }
 
 
-  public save_params(){
+  public save_params() {
 
     // Collect data from formGeral
     const formData = this.formGeral.value;
 
     const kwargs = { ...formData }; // Spread operator to copy formData into kwargs
-    kwargs.algorithm_ = kwargs.algorithm_.toLowerCase();
+
+    //Flexanomalies algorithms are special cased
+    if (kwargs.algorithm_ == "isolationForest" || kwargs.algorithm_ == "pcaAnomaly" || kwargs.algorithm_ == "clusterAnomaly" || kwargs.algorithm_ == "deepCNN_LSTM") {
+      console.log('Flexanomalies algorithm detected');
+    }
+    else {
+      kwargs.algorithm_ = kwargs.algorithm_.toLowerCase();
+    }
     console.log('Kwargs:', kwargs);
 
     // Save parameters with the API
     this._apiservice.setParams(kwargs, this.itemSelected.data.data.category).subscribe((data: any) => {
 
       this.updateItem()
-      this.sharedDataService.updateSelectedItem(this.itemSelected); 
+      this.sharedDataService.updateSelectedItem(this.itemSelected);
 
       // Save parameters to local storage with a node-specific key
       const nodeKey = `savedParams_${this.itemSelected.id}`;
@@ -151,7 +186,7 @@ export class ConfigComponentsComponent implements OnInit {
     this.activeModal.close(false);
   }
 
- 
+
 
   private createKeyValuePair() {
     const keyValueTemplate = this.elementRef.nativeElement.querySelector('[data-key-value-template]');
@@ -162,6 +197,47 @@ export class ConfigComponentsComponent implements OnInit {
     return element
   }
 
+  toString(value: any,): string {
+    if (this.itemSelected.data.data.category == "time_series") {
+      if (Object.prototype.hasOwnProperty.call(this.complexParamsTs, value)) {
+        return this.complexParamsTs[value];
+      }
+    }
+    if (this.itemSelected.data.data.category == "static_data") {
+      if (Object.prototype.hasOwnProperty.call(this.complexParamsStatic, value)) {
+        return this.complexParamsStatic[value];
+      }
+        
+    }
+    if (this.itemSelected.data.data.category == "federated_data") {
+      if (Object.prototype.hasOwnProperty.call(this.complexParamsFederated, value)) {
+        return this.complexParamsFederated[value];
+      }
+        
+    }
+    return this.itemSelectedParams[value];
+  }
+
+  isReadonly(value: any): boolean {
+    if (this.itemSelected.data.data.category == "time_series") {
+      if (Object.prototype.hasOwnProperty.call(this.readonlyParamsTs, value)) {
+        return this.readonlyParamsTs[value];
+      }
+    }
+    if (this.itemSelected.data.data.category == "static_data") {
+      if (Object.prototype.hasOwnProperty.call(this.readonlyParamsStatic, value)) {
+        return this.readonlyParamsStatic[value];
+      }
+        
+    }
+    if (this.itemSelected.data.data.category == "federated_data") {
+      if (Object.prototype.hasOwnProperty.call(this.readonlyParamsFederated, value)) {
+        return this.readonlyParamsFederated[value];
+      }
+        
+    }
+    return false;
+  }
 
 
 }

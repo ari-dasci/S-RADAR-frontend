@@ -44,10 +44,6 @@
             <div *ngIf="category.label === 'Algorithms' && category.expanded">
 
               <!-- Load algorithms base module OPERATIONS -->
-              <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-model]="'fit()'"
-                [attr.data-node]="'Fit Model'" [attr.data-category]="federated_data" [attr.data-icon]="'fa fa-robot'">
-                <i style="margin-right: 8px;" class="fa fa-robot"></i><span>fit()</span>
-              </div>
               <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-model]="'predict()'"
                 [attr.data-node]="'Predict Model'" [attr.data-category]="federated_data"
                 [attr.data-icon]="'fa fa-robot'">
@@ -103,10 +99,6 @@
 
 
               <!-- Load algorithms base module OPERATIONS -->
-              <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-model]="'fit()'"
-                [attr.data-node]="'Fit Model'" [attr.data-category]="static_data" [attr.data-icon]="'fa fa-robot'">
-                <i style="margin-right: 8px;" class="fa fa-robot"></i><span>fit()</span>
-              </div>
               <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-model]="'predict()'"
                 [attr.data-node]="'Predict Model'" [attr.data-category]="static_data" [attr.data-icon]="'fa fa-robot'">
                 <i style="margin-right: 8px;" class="fa fa-robot"></i><span>predict()</span>
@@ -174,10 +166,6 @@
 
 
               <!-- Load algorithms base module OPERATIONS -->
-              <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-model]="'fit()'"
-                [attr.data-node]="'Fit Model'" [attr.data-category]="time_series" [attr.data-icon]="'fa fa-robot'">
-                <i style="margin-right: 8px;" class="fa fa-robot"></i><span>fit()</span>
-              </div>
               <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-model]="'predict()'"
                 [attr.data-node]="'Predict Model'" [attr.data-category]="time_series" [attr.data-icon]="'fa fa-robot'">
                 <i style="margin-right: 8px;" class="fa fa-robot"></i><span>predict()</span>

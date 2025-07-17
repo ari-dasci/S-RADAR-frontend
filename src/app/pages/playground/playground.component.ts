@@ -685,7 +685,7 @@ export class PlaygroundComponent implements OnInit {
   private openModalConfig() {
 
     //Node types with no modal configuration
-    if (this.selectedNode.name === 'Fit Model' || this.selectedNode.name === 'Preprocessing' || this.selectedNode.name === 'Predict Model' || this.selectedNode.name === 'Decision Function Model') {
+    if (this.selectedNode.name === 'Preprocessing' || this.selectedNode.name === 'Predict Model' || this.selectedNode.name === 'Decision Function Model') {
     }
     else if (this.selectedNode.name === 'Load Dataset') { //Load Dataset modal
       const modalRef = this.modalService.open(ConfigDatasetComponentsComponent, {

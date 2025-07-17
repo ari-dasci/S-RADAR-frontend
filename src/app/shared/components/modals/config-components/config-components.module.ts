@@ -6,6 +6,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { TabCallApiComponent } from './tab-call-api/tab-call-api.component';
 import { TabSendMessageComponent } from './tab-send-message/tab-send-message.component';
+import { SharedModule } from '../../../shared.module';
 
 @NgModule({
   imports: [
