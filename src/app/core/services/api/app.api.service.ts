@@ -18,10 +18,8 @@ export class ApiService {
     getCategories(_type: string) {
         if (_type == 'static_data')
             return this._http.get(environment.urlApi + '/static_data/categories');
-        //if (_category == 'time_series')
-        //    return this._http.get(environment.urlApi + '/time_series/algorithms');
         else {
-            // Handle invalid category here, for example, throw an error
+            // Handle invalid category 
             return throwError(() => new Error('Invalid type provided'))
         }
     }
@@ -33,7 +31,7 @@ export class ApiService {
         if (_category == 'federated_data')
             return this._http.get(environment.urlApi + '/federated_data/algorithms');
         else {
-            // Handle invalid category here, for example, throw an error
+            // Handle invalid category 
             return throwError(() => new Error('Invalid category provided'))
         }
     }
@@ -45,7 +43,7 @@ export class ApiService {
         if (_category == 'federated_data')
             return this._http.get(environment.urlApi + '/federated_data/library_algorithms/' + _library)
         else {
-            // Handle invalid category here, for example, throw an error
+            // Handle invalid category 
             return throwError(() => new Error('Invalid category provided'))
         }
     }
@@ -61,7 +59,7 @@ export class ApiService {
         if (_category == 'federated_data')
             return this._http.get(environment.urlApi + "/federated_data/get_params/" + modelName)
         else {
-            // Handle invalid category here, for example, throw an error
+            // Handle invalid category 
             return throwError(() => new Error('Invalid category provided'))
         }
     }
@@ -74,7 +72,7 @@ export class ApiService {
         if (_category == 'federated_data')
             return this._http.post(environment.urlApi + "/federated_data/set_params", kwargs)
         else {
-            // Handle invalid category here, for example, throw an error
+            // Handle invalid category 
             return throwError(() => new Error('Invalid category provided'))
         }
     }
@@ -87,7 +85,7 @@ export class ApiService {
         if (_category == 'federated_data')
             return this._http.get(environment.urlApi + "/federated_data/datasets")
         else {
-            // Handle invalid category here, for example, throw an error
+            // Handle invalid category 
             return throwError(() => new Error('Invalid category provided'))
         }
     }
@@ -98,7 +96,7 @@ export class ApiService {
         if (_category == 'time_series')
             return this._http.get(environment.urlApi + "/time_series/preprocessing")
         else {
-            // Handle invalid category here, for example, throw an error
+            // Handle invalid category 
             return throwError(() => new Error('Invalid category provided'))
         }
     }
@@ -106,7 +104,7 @@ export class ApiService {
     run_pipeline(_json: any): Observable<any> {
         return this._http.post<any>(`${environment.urlApi}/pipelines/run_pipeline`, _json).pipe(
             map((response) => {
-                // If response is a JSON string (from `fig.to_json()`), parse it
+                // If response is a JSON string (from fig.to_json()), parse it
                 try {
                     return typeof response === 'string' ? JSON.parse(response) : response;
                 } catch (e) {

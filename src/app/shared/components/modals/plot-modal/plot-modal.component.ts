@@ -137,11 +137,5 @@ export class PlotModalComponent {
         // Show a confirmation alert
         alert('Parameters saved successfully!');
     }
-
-    public save_plot(nodeKey: string, jsonData: any) {
-        console.log('Saving parameters for:', nodeKey);
-        const finalNodeKey = `savedParams_${this.itemSelected.id}`;
-        localStorage.setItem(finalNodeKey, JSON.stringify(jsonData));
-    }
 }
 

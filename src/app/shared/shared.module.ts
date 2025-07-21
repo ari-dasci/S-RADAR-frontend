@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule, KeyValuePipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ConfirmacaoComponent } from './components/modals/confirmacao/confirmacao.component';
 import { ConfigComponentsComponent } from './components/modals/config-components/config-components.component';
 import { ConfigComponentsModule } from './components/modals/config-components/config-components.module';
 import { BrowserModule } from '@angular/platform-browser';
@@ -11,7 +10,6 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { ApiService } from './providers/api.service';
 import { FlowService } from './providers/flow.service';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { WbotComponent } from './components/modals/wbot/wbot.component';
 import { ConfigDatasetComponentsComponent } from './components/modals/config-dataset-components/config-dataset-components.component';
 import { PlotModalComponent } from './components/modals/plot-modal/plot-modal.component';
 import { PlotlyModule } from 'angular-plotly.js';
@@ -27,9 +25,9 @@ import { PlotlyModule } from 'angular-plotly.js';
     NgSelectModule,
     HttpClientModule,
   ],
-  declarations: [ConfirmacaoComponent, WbotComponent, ConfigDatasetComponentsComponent, PlotModalComponent],
+  declarations: [ConfigDatasetComponentsComponent, PlotModalComponent],
   providers: [DataFilterService, ApiService, FlowService],
-  exports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, BrowserModule, PlotModalComponent, ConfirmacaoComponent, ConfigComponentsModule, KeyValuePipe, NgSelectModule, WbotComponent]
+  exports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, BrowserModule, PlotModalComponent, ConfigComponentsModule, KeyValuePipe, NgSelectModule]
 })
 export class SharedModule {
   static forRoot() {

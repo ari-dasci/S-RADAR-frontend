@@ -145,15 +145,4 @@ export class ConfigDatasetComponentsComponent {
 
  
 
-  private createKeyValuePair() {
-    const keyValueTemplate = this.elementRef.nativeElement.querySelector('[data-key-value-template]');
-    const element = keyValueTemplate.content.cloneNode(true)
-    element.querySelector("[data-remove-btn]").addEventListener("click", (e: any) => {
-      e.target.closest("[data-key-value-pair]").remove()
-    })
-    return element
-  }
-
-
-
 }

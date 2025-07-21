@@ -1,14 +1,11 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, NgZone, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import Drawflow from 'drawflow';
 import { ConfigComponentsComponent } from '../../shared/components/modals/config-components/config-components.component';
 import { TypeComponent, icon } from '../../shared/models/components/type-component.enum';
 import { SharedDataService } from '../../shared/providers/sharedData.service';
 import { FlowService } from '../../shared/providers/flow.service';
-import { WbotComponent } from '../../shared/components/modals/wbot/wbot.component';
-import { trigger, transition, style, animate } from '@angular/animations';
 import { ApiService } from '../../core/services/api/app.api.service';
-import { Observable } from 'rxjs';
 import { ConfigDatasetComponentsComponent } from '../../shared/components/modals/config-dataset-components/config-dataset-components.component';
 
 import { PlotModalComponent } from '../../shared/components/modals/plot-modal/plot-modal.component';
@@ -73,40 +70,27 @@ export class PlaygroundComponent implements OnInit {
   editDivHtml: HTMLElement;
   editButtonShown: boolean = false;
 
-  drawnNodes: any[] = [];
   selectedNodeId: string;
   selectedNode: any = {};
 
-  lastMousePositionEv: any;
-
-  mobile_item_selec: string;
-  mobile_last_move: TouchEvent | null;
-
   nodeModal: ElementRef;
 
-  @ViewChild('minhaDiv') minhaDiv: ElementRef;
   components = TypeComponent;
-  // classComponents: any[];
-  // nameComponents: any[];
 
   isLightTheme = true;
+  showExportButton: boolean = true;
+  exportData: string;
 
-  getIconClass(type: TypeComponent): string {
-    return icon.get(type) || 'fa fa-pencil'; // Pode definir uma classe padrão se não houver correspondência
-  }
-
-  constructor(private cdRef: ChangeDetectorRef,private _apiservice: ApiService, private modalService: NgbModal, private sharedDataService: SharedDataService, private flowService: FlowService, private renderer: Renderer2, private el: ElementRef) {
+  constructor(private cdRef: ChangeDetectorRef, private _apiservice: ApiService, private modalService: NgbModal, private sharedDataService: SharedDataService, private flowService: FlowService, private renderer: Renderer2, private el: ElementRef) {
     this.sharedDataService.getSelectedItemObservable().subscribe((item) => {
       if (this.selectedNodeId) {
         const id = this.selectedNodeId.slice(5);
-        var teste = this.editor.drawflow.drawflow.Home.data[`${id}`];
         this.editor.drawflow.drawflow.Home.data[`${id}`] = item
       }
     });
   }
 
   ngOnInit() {
-    //this.getData();
     this.getAlgorithms('static_data');
     this.getPreprocessing('static_data');
     this.getAlgorithms('time_series');
@@ -119,22 +103,6 @@ export class PlaygroundComponent implements OnInit {
     this.editor.editor_mode = this.locked != null && this.locked ? 'fixed' : 'edit';
   }
 
-  async openPlotDialog() {
-    const modalVis = this.modalService.open(PlotModalComponent, {
-      centered: true,
-      backdrop: 'static',
-      size: 'lg'
-    });
-  }
-
-
-  addNodeInput() {
-    this.editor.addNodeInput(this.selectedNodeId.slice(5));
-  }
-
-  addNodeOut() {
-    this.editor.addNodeOutput(this.selectedNodeId.slice(5));
-  }
 
   // Toggle the visibility of a category (like 'Algorithms' or 'Preprocessing')
   toggleCategory(category: { label: string, icon: string, expanded: boolean }) {
@@ -149,18 +117,7 @@ export class PlaygroundComponent implements OnInit {
 
 
   // ******************************************** MODEL OPERATIONS *****************************************************************//
-  getData() {
-    this._apiservice.getdata()
-      .subscribe(
-        (response) => {
-          const componentsList = response;
-          //console.log(componentsList)
-        },
-        (error) => {
-          console.error('Error fetching data:', error);
-        }
-      );
-  }
+
 
   getLibraryAlgorithms(_category: string, _library: string) {
     try {
@@ -174,7 +131,6 @@ export class PlaygroundComponent implements OnInit {
   }
 
   getPreprocessing(_category: string) {
-    // Make sure getPreprocessing exists in ApiService, or replace with the correct method name
     this._apiservice.getPreprocessing(_category)
       .subscribe(
         (response: any) => {
@@ -297,18 +253,6 @@ export class PlaygroundComponent implements OnInit {
     algorithm.expanded = !algorithm.expanded; // Toggle the expanded property
   }
 
-  teste() {
-    // da pra usar pra validar se já possui mais de 1 item com mesmo nome, retorna um array
-    var arrayNames = this.editor.getNodesFromName(this.selectedNode.name);
-    var item = this.editor.getNodeFromId(this.selectedNodeId.slice(5));
-    var module = this.editor.getModuleFromNodeId(this.selectedNodeId.slice(5));
-  }
-
-  private getKeyByValue(value: string, enumObject: any): string | null {
-    const keys = Object.keys(enumObject).filter(key => enumObject[key] === value);
-    return keys.length > 0 ? keys[0] : null;
-  }
-
   private initDrawingBoard() {
     this.initDrawFlow();
     if (!this.locked) {
@@ -337,7 +281,7 @@ export class PlaygroundComponent implements OnInit {
   }
 
   private addEditorEvents() {
-    // Events!
+    // Event listeners for the Drawflow editor
     this.editor.on('nodeCreated', (id: any) => {
       console.log('Editor Event :>> Node created ' + id, this.editor.getNodeFromId(id));
 
@@ -472,10 +416,6 @@ export class PlaygroundComponent implements OnInit {
 
   }
 
-  private positionMobile(ev: any) {
-    this.mobile_last_move = ev;
-  }
-
   public allowDrop(ev: any) {
     ev.preventDefault();
   }
@@ -493,7 +433,7 @@ export class PlaygroundComponent implements OnInit {
 
   drop(ev: any) {
     if (ev.type === "touchend") {
-      this.mobile_item_selec = '';
+
     } else {
       ev.preventDefault();
       var data = ev.dataTransfer.getData("node");
@@ -513,7 +453,6 @@ export class PlaygroundComponent implements OnInit {
     pos_x = pos_x * (this.editor.precanvas.clientWidth / (this.editor.precanvas.clientWidth * this.editor.zoom)) - (this.editor.precanvas.getBoundingClientRect().x * (this.editor.precanvas.clientWidth / (this.editor.precanvas.clientWidth * this.editor.zoom)));
     pos_y = pos_y * (this.editor.precanvas.clientHeight / (this.editor.precanvas.clientHeight * this.editor.zoom)) - (this.editor.precanvas.getBoundingClientRect().y * (this.editor.precanvas.clientHeight / (this.editor.precanvas.clientHeight * this.editor.zoom)));
 
-    var keyFromName = this.getKeyByValue(name, TypeComponent)?.toString();
     let html = '';
 
     if (name) {
@@ -530,19 +469,6 @@ export class PlaygroundComponent implements OnInit {
     }
 
     return true;
-  }
-
-  async export() {
-
-    const html = JSON.stringify(this.editor.export(), null, 4)
-
-    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(html);
-    const fileName = "teste";
-
-    const linkElement = document.createElement('a');
-    linkElement.setAttribute('href', dataUri);
-    linkElement.setAttribute('download', fileName + '.json');
-    linkElement.click();
   }
 
   async runTest() {
@@ -581,7 +507,7 @@ export class PlaygroundComponent implements OnInit {
     };
     console.log(JSON.stringify(nodesJson, null, 2));
 
-    
+
     this._apiservice.run_pipeline(JSON.stringify(nodesJson, null, 2)).subscribe(
       (data: any) => {
         try {
@@ -610,7 +536,7 @@ export class PlaygroundComponent implements OnInit {
                 console.log('Saving parameters for:', key);
               }
 
-              //TODO: 3. Load the last Plotly figure into the modal and open it
+              //3. Load the last Plotly figure into the modal and open it
               const modalVis = this.modalService.open(PlotModalComponent, {
                 centered: true,
                 backdrop: 'static',
@@ -625,6 +551,8 @@ export class PlaygroundComponent implements OnInit {
 
           }
           alert(data.message)
+          this.showExportButton = true;
+          this.exportData = data.results
         } catch (e) {
           console.error('Failed to parse plot data:', e);
           alert('Could not parse the plot data returned from the server.');
@@ -637,20 +565,12 @@ export class PlaygroundComponent implements OnInit {
         console.log(error);
         const errorMessage = error.detail || error.error?.detail || 'An unexpected error occurred.';
         alert('Error fetching parameters: ' + errorMessage);
-        this.isLoading = false; 
+        this.isLoading = false;
         this.cdRef.detectChanges();
       }
     );
   }
 
-  save() {
-    const html = JSON.stringify(this.editor.export(), null, 4)
-  }
-
-  import() {
-    const dataToImport = { "drawflow": { "Home": { "data": { "1": { "id": 1, "name": "welcome", "data": {}, "class": "welcome", "html": "\n    <div>\n      <div class=\"title-box\">👏 Welcome!!</div>\n      <div class=\"box\">\n        <p>Simple flow library <b>demo</b>\n        <a href=\"https://github.com/jerosoler/Drawflow\" target=\"_blank\">Drawflow</a> by <b>Jero Soler</b></p><br>\n\n        <p>Multiple input / outputs<br>\n           Data sync nodes<br>\n           Import / export<br>\n           Modules support<br>\n           Simple use<br>\n           Type: Fixed or Edit<br>\n           Events: view console<br>\n           Pure Javascript<br>\n        </p>\n        <br>\n        <p><b><u>Shortkeys:</u></b></p>\n        <p>🎹 <b>Delete</b> for remove selected<br>\n        💠 Mouse Left Click == Move<br>\n        ❌ Mouse Right == Delete Option<br>\n        🔍 Ctrl + Wheel == Zoom<br>\n        📱 Mobile support<br>\n        ...</p>\n      </div>\n    </div>\n    ", "typenode": false, "inputs": {}, "outputs": {}, "pos_x": 50, "pos_y": 50 }, "2": { "id": 2, "name": "slack", "data": {}, "class": "slack", "html": "\n          <div>\n            <div class=\"title-box\"><i class=\"fab fa-slack\"></i> Slack chat message</div>\n          </div>\n          ", "typenode": false, "inputs": { "input_1": { "connections": [{ "node": "7", "input": "output_1" }] } }, "outputs": {}, "pos_x": 1028, "pos_y": 87 }, "3": { "id": 3, "name": "telegram", "data": { "channel": "channel_2" }, "class": "telegram", "html": "\n          <div>\n            <div class=\"title-box\"><i class=\"fab fa-telegram-plane\"></i> Telegram bot</div>\n            <div class=\"box\">\n              <p>Send to telegram</p>\n              <p>select channel</p>\n              <select df-channel>\n                <option value=\"channel_1\">Channel 1</option>\n                <option value=\"channel_2\">Channel 2</option>\n                <option value=\"channel_3\">Channel 3</option>\n                <option value=\"channel_4\">Channel 4</option>\n              </select>\n            </div>\n          </div>\n          ", "typenode": false, "inputs": { "input_1": { "connections": [{ "node": "7", "input": "output_1" }] } }, "outputs": {}, "pos_x": 1032, "pos_y": 184 }, "4": { "id": 4, "name": "email", "data": {}, "class": "email", "html": "\n            <div>\n              <div class=\"title-box\"><i class=\"fas fa-at\"></i> Send Email </div>\n            </div>\n            ", "typenode": false, "inputs": { "input_1": { "connections": [{ "node": "5", "input": "output_1" }] } }, "outputs": {}, "pos_x": 1033, "pos_y": 439 }, "5": { "id": 5, "name": "template", "data": { "template": "Write your template" }, "class": "template", "html": "\n            <div>\n              <div class=\"title-box\"><i class=\"fas fa-code\"></i> Template</div>\n              <div class=\"box\">\n                Ger Vars\n                <textarea df-template></textarea>\n                Output template with vars\n              </div>\n            </div>\n            ", "typenode": false, "inputs": { "input_1": { "connections": [{ "node": "6", "input": "output_1" }] } }, "outputs": { "output_1": { "connections": [{ "node": "4", "output": "input_1" }, { "node": "11", "output": "input_1" }] } }, "pos_x": 607, "pos_y": 304 }, "6": { "id": 6, "name": "github", "data": { "name": "https://github.com/jerosoler/Drawflow" }, "class": "github", "html": "\n          <div>\n            <div class=\"title-box\"><i class=\"fab fa-github \"></i> Github Stars</div>\n            <div class=\"box\">\n              <p>Enter repository url</p>\n            <input type=\"text\" df-name>\n            </div>\n          </div>\n          ", "typenode": false, "inputs": {}, "outputs": { "output_1": { "connections": [{ "node": "5", "output": "input_1" }] } }, "pos_x": 341, "pos_y": 191 }, "7": { "id": 7, "name": "facebook", "data": {}, "class": "facebook", "html": "\n        <div>\n          <div class=\"title-box\"><i class=\"fab fa-facebook\"></i> Facebook Message</div>\n        </div>\n        ", "typenode": false, "inputs": {}, "outputs": { "output_1": { "connections": [{ "node": "2", "output": "input_1" }, { "node": "3", "output": "input_1" }, { "node": "11", "output": "input_1" }] } }, "pos_x": 347, "pos_y": 87 }, "11": { "id": 11, "name": "log", "data": {}, "class": "log", "html": "\n            <div>\n              <div class=\"title-box\"><i class=\"fas fa-file-signature\"></i> Save log file </div>\n            </div>\n            ", "typenode": false, "inputs": { "input_1": { "connections": [{ "node": "5", "input": "output_1" }, { "node": "7", "input": "output_1" }] } }, "outputs": {}, "pos_x": 1031, "pos_y": 363 } } }, "Other": { "data": { "8": { "id": 8, "name": "personalized", "data": {}, "class": "personalized", "html": "\n            <div>\n              Personalized\n            </div>\n            ", "typenode": false, "inputs": { "input_1": { "connections": [{ "node": "12", "input": "output_1" }, { "node": "12", "input": "output_2" }, { "node": "12", "input": "output_3" }, { "node": "12", "input": "output_4" }] } }, "outputs": { "output_1": { "connections": [{ "node": "9", "output": "input_1" }] } }, "pos_x": 764, "pos_y": 227 }, "9": { "id": 9, "name": "dbclick", "data": { "name": "Hello World!!" }, "class": "dbclick", "html": "\n            <div>\n            <div class=\"title-box\"><i class=\"fas fa-mouse\"></i> Db Click</div>\n              <div class=\"box dbclickbox\" ondblclick=\"showpopup(event)\">\n                Db Click here\n                <div class=\"modal\" style=\"display:none\">\n                  <div class=\"modal-content\">\n                    <span class=\"close\" onclick=\"closemodal(event)\">&times;</span>\n                    Change your variable {name} !\n                    <input type=\"text\" df-name>\n                  </div>\n\n                </div>\n              </div>\n            </div>\n            ", "typenode": false, "inputs": { "input_1": { "connections": [{ "node": "8", "input": "output_1" }] } }, "outputs": { "output_1": { "connections": [{ "node": "12", "output": "input_2" }] } }, "pos_x": 209, "pos_y": 38 }, "12": { "id": 12, "name": "multiple", "data": {}, "class": "multiple", "html": "\n            <div>\n              <div class=\"box\">\n                Multiple!\n              </div>\n            </div>\n            ", "typenode": false, "inputs": { "input_1": { "connections": [] }, "input_2": { "connections": [{ "node": "9", "input": "output_1" }] }, "input_3": { "connections": [] } }, "outputs": { "output_1": { "connections": [{ "node": "8", "output": "input_1" }] }, "output_2": { "connections": [{ "node": "8", "output": "input_1" }] }, "output_3": { "connections": [{ "node": "8", "output": "input_1" }] }, "output_4": { "connections": [{ "node": "8", "output": "input_1" }] } }, "pos_x": 179, "pos_y": 272 } } } } }
-    this.editor.import(dataToImport);
-  }
 
   onClear() {
     this.editor.clear();
@@ -672,14 +592,6 @@ export class PlaygroundComponent implements OnInit {
 
   onZoomReset() {
     this.editor.zoom_reset();
-  }
-
-  exportDrawingData() {
-    return this.editor.export();
-  }
-
-  onSubmit() {
-    this.drawingData = this.exportDrawingData();
   }
 
   private openModalConfig() {
@@ -716,17 +628,6 @@ export class PlaygroundComponent implements OnInit {
     }
   }
 
-  private updateNameComponentHtml(typeComponentSelected: string, name: string) {
-    const elements = document.getElementsByClassName('drawflow-node ' + typeComponentSelected + ' selected');
-    if (elements.length > 0) {
-      const divElement = elements[0] as HTMLElement;
-      const spanElement = divElement.querySelector('span');
-
-      if (spanElement) {
-        spanElement.innerText = name;
-      }
-    }
-  }
 
   private hideEditButton() {
     this.editButtonShown = false;
@@ -744,6 +645,7 @@ export class PlaygroundComponent implements OnInit {
     this.openModalConfig()
     // const modalRef = this.modalService.open(content, { size: 'xl', backdrop: 'static', keyboard: false });
   }
+
   private showEditButton() {
     this.editButtonShown = true;
     this.editDivHtml = document.createElement('div');
@@ -756,10 +658,13 @@ export class PlaygroundComponent implements OnInit {
   }
 
   onThemeSwitchChange() {
-    console.log("trocou thema")
     const htmlElement = document.querySelector('[data-bs-theme]')
     this.renderer.setAttribute(htmlElement, 'data-bs-theme', this.isLightTheme ? 'dark' : 'light');
     this.isLightTheme = !this.isLightTheme;
+  }
+  exportToTxt() {
+    // (same logic as above)
+    this.showExportButton = false;
   }
 
 }

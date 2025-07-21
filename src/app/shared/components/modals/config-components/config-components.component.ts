@@ -187,16 +187,6 @@ export class ConfigComponentsComponent implements OnInit {
   }
 
 
-
-  private createKeyValuePair() {
-    const keyValueTemplate = this.elementRef.nativeElement.querySelector('[data-key-value-template]');
-    const element = keyValueTemplate.content.cloneNode(true)
-    element.querySelector("[data-remove-btn]").addEventListener("click", (e: any) => {
-      e.target.closest("[data-key-value-pair]").remove()
-    })
-    return element
-  }
-
   toString(value: any,): string {
     if (this.itemSelected.data.data.category == "time_series") {
       if (Object.prototype.hasOwnProperty.call(this.complexParamsTs, value)) {

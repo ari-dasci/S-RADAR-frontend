@@ -58,7 +58,7 @@
               <!-- Load algorithms -->
               <div *ngFor="let algorithm of federated_algorithms" (click)="toggleAlgorithm(algorithm, $event)">
                 <div class="drag-drawflow drag-bars" [attr.data-node]="algorithm.label">
-                  <i style="margin-right: 8px;" class="{{algorithm.icon}}"></i><span>{{algorithm.label}}</span>
+                  <i style="margin-right: 8px;" class="fa fa-book-open"></i><span>{{algorithm.label}}</span>
                   <div *ngIf="algorithm.expanded">
                     <div *ngFor="let item of algorithm.items">
                       <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-model]="item"
@@ -112,7 +112,7 @@
 
               <div *ngFor="let algorithm of staticdata_algorithms" (click)="toggleAlgorithm(algorithm, $event)">
                 <div class="drag-drawflow drag-bars" [attr.data-node]="algorithm.label">
-                  <i style="margin-right: 8px;" class="{{algorithm.icon}}"></i><span>{{algorithm.label}}</span>
+                  <i style="margin-right: 8px;" class="fa fa-book-open"></i><span>{{algorithm.label}}</span>
                   <div *ngIf="algorithm.expanded">
                     <div *ngFor="let item of algorithm.items">
                       <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-model]="item"
@@ -126,9 +126,7 @@
               </div>
             </div>
 
-            <!-- Empty content for 'Preprocessing' category, you can add content later -->
             <div *ngIf="category.label === 'Preprocessing' && category.expanded">
-              <!-- Preprocessing is currently empty -->
               <div *ngFor="let item of preprocessing_static">
                 <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-model]="item.label"
                   [attr.data-node]="'Preprocessing'" [attr.data-category]="static_data"
@@ -178,7 +176,7 @@
 
               <div *ngFor="let algorithm of timeseries_algorithms" (click)="toggleAlgorithm(algorithm, $event)">
                 <div class="drag-drawflow drag-bars" [attr.data-node]="algorithm.label">
-                  <i style="margin-right: 8px;" class="{{algorithm.icon}}"></i><span>{{algorithm.label}}</span>
+                  <i style="margin-right: 8px;" class="fa fa-book-open"></i><span>{{algorithm.label}}</span>
                   <div *ngIf="algorithm.expanded">
                     <div *ngFor="let item of algorithm.items">
                       <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-model]="item"
@@ -191,9 +189,8 @@
                 </div>
               </div>
             </div>
-            <!-- Empty content for 'Preprocessing' category, you can add content later -->
+
             <div *ngIf="category.label === 'Preprocessing' && category.expanded">
-              <!-- Preprocessing is currently empty -->
               <div *ngFor="let item of preprocessing_ts">
                 <div class="drag-drawflow" draggable="true" (dragstart)="drag($event)" [attr.data-model]="item.label"
                   [attr.data-node]="'Preprocessing'" [attr.data-category]="time_series"
@@ -223,24 +220,13 @@
           <li onclick="editor.changeModule('Home'); changeModule(event);" class="selected">Playground</li>
         </ul>
 
-        <!-- <div class="theme-switcher">
-          <label class="swtich">
-            <input
-              type="checkbox"
-              [checked]="isLightTheme"
-              (change)="onThemeSwitchChange()"
-            />
-          </label>
-        </div> -->
-
       </div>
       <div id="drawflow" (drop)="drop($event)" (dragover)="allowDrop($event)">
 
-        <div class="btn-export" (click)="export()">Export</div>
-        <div class="btn-import" (click)="openPlotDialog()">Import</div>
         <div class="btn-test" (click)="runTest()" type="button"> <i class="fa fa-play fa-xs"></i>
           Test</div>
-
+        <div *ngIf="showExportButton" class="btn-clear" (click)="exportToTxt()" type="button"> <i class="fa fa-download"></i>
+          Export results</div>
         <div class="btn-lock" [ngClass]="locked ? 'locked' : ''">
           <i (click)="changeMode()" class="fas fa-lock-open" [ngStyle]="{ display: locked ? 'none' : 'block' }"></i>
           <i (click)="changeMode()" class="fas fa-lock" [ngStyle]="{ display: locked ? 'block' : 'none' }"></i>

@@ -5,5 +5,5 @@
 export const environment = {
   production: false,
   apiUrl: 'http://localhost:8000/api/gateway',
-  urlApi: 'http://localhost:8034',
+  urlApi: 'http://localhost:8000',
 };
