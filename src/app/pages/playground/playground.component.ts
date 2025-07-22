@@ -78,7 +78,7 @@ export class PlaygroundComponent implements OnInit {
   components = TypeComponent;
 
   isLightTheme = true;
-  showExportButton: boolean = true;
+  showExportButton: boolean = false;
   exportData: string;
 
   constructor(private cdRef: ChangeDetectorRef, private _apiservice: ApiService, private modalService: NgbModal, private sharedDataService: SharedDataService, private flowService: FlowService, private renderer: Renderer2, private el: ElementRef) {
@@ -551,13 +551,25 @@ export class PlaygroundComponent implements OnInit {
 
           }
           alert(data.message)
-          this.showExportButton = true;
-          this.exportData = data.results
+
+          if (data.results_pred) {
+            this.showExportButton = true;
+            this.exportData = data.results_pred;
+          }
+          else if (data.results_dec) {
+            this.showExportButton = true;
+            this.exportData = data.results_dec;
+          }
+
+
         } catch (e) {
           console.error('Failed to parse plot data:', e);
           alert('Could not parse the plot data returned from the server.');
         } finally {
           this.isLoading = false; // END loading
+
+
+
           this.cdRef.detectChanges();
         }
       },
@@ -570,6 +582,8 @@ export class PlaygroundComponent implements OnInit {
       }
     );
   }
+
+
 
 
   onClear() {
@@ -663,8 +677,16 @@ export class PlaygroundComponent implements OnInit {
     this.isLightTheme = !this.isLightTheme;
   }
   exportToTxt() {
-    // (same logic as above)
-    this.showExportButton = false;
+    const content = `Prediction: [${this.exportData}]`;
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'results.txt';
+    a.click();
+
+    URL.revokeObjectURL(url);
   }
 
 }

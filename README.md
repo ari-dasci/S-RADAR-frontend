@@ -1,6 +1,6 @@
 # S-ADL-frontend
 
-This web application enables users to design and run custom data pipelines for anomaly detection, preprocessing, and visualization through a **node-based interface**. Each node represents an algorithm, transformation, or data source (API or scraper), and the results can be visualized, saved, or exported.
+This web application enables users to design and run custom data pipelines for anomaly detection, preprocessing, and visualization through a **node-based interface**. Each node represents an algorithm, transformation, or data source (API or scraper), and the results can be visualized, saved, or exported. This is a visual interface designed to get to know [**S-ADL library**](https://github.com/ari-dasci/S-ADL) , a Software Anomaly Detection Library that provides a modular collection of state-of-the-art algorithms for detecting anomalies in different types of data. S-ADL includes tools for preprocessing, feature extraction, time series analysis, and unsupervised as well as supervised anomaly detection techniques.
 
 The system is composed of a **frontend built with Angular** and a **backend REST API built with FastAPI**. The app supports dynamic pipeline execution, modular visualization, and parameter storage using localStorage.
 
@@ -8,7 +8,7 @@ The system is composed of a **frontend built with Angular** and a **backend REST
 
 ## 🧱 Features
 
-- 🧠 **Modular Node Editor**: Drag-and-drop interface to design custom pipelines.
+- 🧠 **Modular Node Editor**: Drag-and-drop interface to design custom pipelines (based on [**Drawflow**](https://github.com/jerosoler/Drawflow)).
 - 📈 **Interactive Visualizations**: Automatically display plots using Plotly.js.
 - 📂 **Parameter Persistence**: Save & reload node parameters locally.
 - 🔗 **External Data Integration**: API and scraping sources supported.
@@ -21,8 +21,9 @@ The system is composed of a **frontend built with Angular** and a **backend REST
 ## 🛠️ Technologies
 
 - **Frontend**: Angular 16+, Bootstrap Modals, Plotly.js
-- **Backend**: FastAPI, Python 3.9+, Pydantic
+- **Backend**: FastAPI, Python 3.9+
 - **Communication**: REST API (JSON)
+- **Library**: S-ADL Software Anomaly Detection Library 
 
 ---
 
@@ -65,18 +66,24 @@ Then open your browser at: [http://localhost:4200](http://localhost:4200)
 ### Prerequisites
 
 - Python 3.9+
-- `virtualenv` (optional but recommended)
+- `conda` (optional but recommended)
 
 ### Install dependencies
 
-### Clone the repository
+### Clone the frontend repository
 
 ```bash
 git clone https://github.com/marinahbau/S-ADL-frontend.git
 cd S-ADL-frontend
 ```
 
-### Install API + S-ADL library
+### Clone the API (backend) repository
+
+```bash
+git clone https://github.com/marinahbau/S-ADL-API.git
+```
+
+### Option A: Install API + S-ADL library (conda environment) COMPLETAR
 
 ```bash
 cd backend
@@ -84,6 +91,11 @@ python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
+
+### Option B: Manually install API + S-ADL library
+
+- Install FastAPI
+- Install S-ADL library
 
 ### Run the FastAPI server
 
