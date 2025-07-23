@@ -1,20 +1,32 @@
 # S-ADL-frontend
 
-This web application enables users to design and run custom data pipelines for anomaly detection, preprocessing, and visualization through a **node-based interface**. Each node represents an algorithm, transformation, or data source (API or scraper), and the results can be visualized, saved, or exported. This is a visual interface designed to get to know [**S-ADL library**](https://github.com/ari-dasci/S-ADL) , a Software Anomaly Detection Library that provides a modular collection of state-of-the-art algorithms for detecting anomalies in different types of data. S-ADL includes tools for preprocessing, feature extraction, time series analysis, and unsupervised as well as supervised anomaly detection techniques.
+This web application enables users to design and run custom data pipelines for anomaly detection, preprocessing, and visualization through a **node-based interface**. Each node represents an algorithm, transformation, or data source (API or scraper), and the results can be visualized, saved, or exported. 
 
-The system is composed of a **frontend built with Angular** and a **backend REST API built with FastAPI**. The app supports dynamic pipeline execution, modular visualization, and parameter storage using localStorage.
+This is a visual interface designed to get to know [**S-ADL library**](https://github.com/ari-dasci/S-ADL), a Software Anomaly Detection Library that provides a modular collection of state-of-the-art algorithms for detecting anomalies in different types of data. S-ADL includes tools for preprocessing, visualization, and state-of-the-art algorithms for detecting anomalies in different types of data.
+
+The system is composed of a **frontend built with Angular** and a **backend REST API built with FastAPI**. The app supports dynamic pipeline execution and modular visualization.
 
 ---
 
-## 🧱 Features
-
+## 🧱 Features & How to Use
 - 🧠 **Modular Node Editor**: Drag-and-drop interface to design custom pipelines (based on [**Drawflow**](https://github.com/jerosoler/Drawflow)).
+  
+  ![Demo of node editor](./readme_assets/gif1_readme.gif)
+
 - 📈 **Interactive Visualizations**: Automatically display plots using Plotly.js.
-- 📂 **Parameter Persistence**: Save & reload node parameters locally.
-- 🔗 **External Data Integration**: API and scraping sources supported.
-- 📦 **Backend Algorithm Library**: Easily extend with new processing models.
+
+  ![Demo of plotly](./readme_assets/gif2_readme.gif)
+
+
 - 🧪 **Pipeline Execution**: Run full pipelines with a single button.
+
+  ![Demo of pipelines](./readme_assets/gif3_readme.gif)
+
 - 🧾 **Export Results**: Save visualizations as `.txt` files after execution.
+
+  ![Demo of exporting](./readme_assets/gif4_readme.gif)
+
+- 📦 **Backend Algorithm Library**: Easily extend with new processing models.
 
 ---
 
@@ -121,7 +133,7 @@ The Angular app is preconfigured to send pipeline requests to `http://localhost:
 2. Configure their parameters.
 3. Click **"Run pipeline"**.
 4. Visualizations will appear in modals.
-5. After execution, a message with a button will let you **export results as a **``** file**.
+5. After execution, a message with a button will let you **export results as a **`.txt`** file**.
 
 ---
 

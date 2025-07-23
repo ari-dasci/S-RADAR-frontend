@@ -42,14 +42,14 @@ export class ConfigDatasetComponentsComponent {
     if (savedParams) {
       console.log('Saved Params from Local Storage:', savedParams);
       var optionSelected = JSON.parse(savedParams);
-      console.log('Loaded Params from Local Storage:', optionSelected);
+      console.log('Loaded Params from Local Storage:', optionSelected.dataset);
 
       this._apiservice.getDatasets(this.itemSelected.data.data.category).subscribe((data: any) => {
         this.itemSelectedParams = data;
 
         //Load the optionSelected into the formDataset
         this.formDataset = this.fb.group({
-          datasetSelected: [optionSelected]
+          datasetSelected: [optionSelected.dataset]
         });
 
 
@@ -121,11 +121,8 @@ export class ConfigDatasetComponentsComponent {
 
 
   updateItem() {
-    // Itera sobre os controles do FormGroup
     Object.keys(this.formDataset.controls).forEach(controlName => {
-      // Verifica se o campo correspondente existe em itemSelected
       if (this.itemSelected.hasOwnProperty(controlName)) {
-        // Define o valor do controle no itemSelected
         this.itemSelected[controlName] = this.tryParseJSON(this.formDataset.get(controlName)?.value);
       }
     });
@@ -135,7 +132,7 @@ export class ConfigDatasetComponentsComponent {
     try {
       return JSON.parse(jsonString);
     } catch (error) {
-      return jsonString; // or handle the error as needed
+      return jsonString; 
     }
   }
 

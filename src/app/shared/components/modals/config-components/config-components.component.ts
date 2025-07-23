@@ -141,6 +141,9 @@ export class ConfigComponentsComponent implements OnInit {
     else {
       kwargs.algorithm_ = kwargs.algorithm_.toLowerCase();
     }
+    for (const key in kwargs) {
+      kwargs[key] = this.inferAndCastValue(kwargs[key]);
+    }
     console.log('Kwargs:', kwargs);
 
     // Save parameters with the API
@@ -197,13 +200,13 @@ export class ConfigComponentsComponent implements OnInit {
       if (Object.prototype.hasOwnProperty.call(this.complexParamsStatic, value)) {
         return this.complexParamsStatic[value];
       }
-        
+
     }
     if (this.itemSelected.data.data.category == "federated_data") {
       if (Object.prototype.hasOwnProperty.call(this.complexParamsFederated, value)) {
         return this.complexParamsFederated[value];
       }
-        
+
     }
     return this.itemSelectedParams[value];
   }
@@ -218,16 +221,30 @@ export class ConfigComponentsComponent implements OnInit {
       if (Object.prototype.hasOwnProperty.call(this.readonlyParamsStatic, value)) {
         return this.readonlyParamsStatic[value];
       }
-        
+
     }
     if (this.itemSelected.data.data.category == "federated_data") {
       if (Object.prototype.hasOwnProperty.call(this.readonlyParamsFederated, value)) {
         return this.readonlyParamsFederated[value];
       }
-        
+
     }
     return false;
   }
 
+  inferAndCastValue(value: any): any {
+    if (typeof value !== 'string') return value; // Already a number or boolean
+
+    const trimmed = value.trim();
+
+    // Check if it's a valid number
+    const num = Number(trimmed);
+    if (!isNaN(num)) {
+      // Preserve int if no decimal, otherwise float
+      return trimmed.includes('.') ? parseFloat(trimmed) : parseInt(trimmed, 10);
+    }
+
+    return value; // Keep as string
+  }
 
 }

@@ -560,16 +560,15 @@ export class PlaygroundComponent implements OnInit {
             this.showExportButton = true;
             this.exportData = data.results_dec;
           }
-
-
+          else {
+            this.showExportButton = false;
+          }
+          
         } catch (e) {
           console.error('Failed to parse plot data:', e);
           alert('Could not parse the plot data returned from the server.');
         } finally {
           this.isLoading = false; // END loading
-
-
-
           this.cdRef.detectChanges();
         }
       },
