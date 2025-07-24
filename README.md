@@ -32,7 +32,7 @@ The system is composed of a **frontend built with Angular** and a **backend REST
 
 ## 🛠️ Technologies
 
-- **Frontend**: Angular 16+, Bootstrap Modals, Plotly.js
+- **Frontend**: Angular 17+, Bootstrap Modals, Plotly.js
 - **Backend**: FastAPI, Python 3.9+
 - **Communication**: REST API (JSON)
 - **Library**: S-ADL Software Anomaly Detection Library 
@@ -54,8 +54,13 @@ cd S-ADL-frontend
 
 ### Prerequisites
 
-- Node.js (v18+ recommended)
-- Angular CLI
+- Angular CLI: 17.3.17
+- Node.js: 21.7.1
+
+You can install Angular CLI via:
+```bash
+npm install -g @angular/cli@17
+```
 
 ### Install dependencies
 
@@ -77,10 +82,10 @@ Then open your browser at: [http://localhost:4200](http://localhost:4200)
 
 ### Prerequisites
 
-- Python 3.9+
+- **Python: 3.10** (tested with 3.10.18)
+- **Pytorch: 2.7.1** (tested with with CUDA 11.8 support)
 - `conda` (optional but recommended)
 
-### Install dependencies
 
 ### Clone the frontend repository
 
@@ -95,24 +100,45 @@ cd S-ADL-frontend
 git clone https://github.com/marinahbau/S-ADL-API.git
 ```
 
-### Option A: Install API + S-ADL library (conda environment) COMPLETAR
+### Clone the S-ADL library
 
 ```bash
-cd backend
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-pip install -r requirements.txt
+git clone https://github.com/marinahbau/S-ADL.git
 ```
 
-### Option B: Manually install API + S-ADL library
+### Install S-ADL library + API (conda environment)
 
-- Install FastAPI
-- Install S-ADL library
+
+```bash
+conda create --prefix ./envs/sadl-env python=3.10.18
+
+conda activate ./envs/sadl-env 
+
+conda env update --prefix /mnt/homeGPU/mbautista/sadl-env --file sadl-env.yml --prune
+
+#Make sure Pytorch is installed now, if you have CUDA 11.8
+pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+
+pip install pytorch-lightning
+```
+
+Now install the API with
+
+```bash
+pip install "fastapi[standard]"
+pip install "uvicorn[standard]"
+```
+
+Export path to S-ADL library
+
+```bash
+export PYTHONPATH=«route_to_SADL»
+```
 
 ### Run the FastAPI server
 
 ```bash
-uvicorn main:app --reload
+uvicorn main:app --reload --host 0.0.0.0 
 ```
 
 API will be available at: [http://localhost:8000](http://localhost:8000)
