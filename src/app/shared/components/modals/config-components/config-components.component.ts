@@ -51,8 +51,10 @@ export class ConfigComponentsComponent implements OnInit {
 
   readonlyParamsFederated: { [key: string]: boolean } = {
     'algorithm_': true,
+    'input_dim': true,
   };
   complexParamsFederated: { [key: string]: string } = {
+    'input_dim': 'X.shape[1]',
   };
 
 

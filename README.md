@@ -44,7 +44,7 @@ The system is composed of a **frontend built with Angular** and a **backend REST
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/marinahbau/S-ADL-frontend.git
+git clone https://github.com/ari-dasci/S-ADL-frontend.git
 cd S-ADL-frontend
 ```
 
@@ -87,23 +87,16 @@ Then open your browser at: [http://localhost:4200](http://localhost:4200)
 - `conda` (optional but recommended)
 
 
-### Clone the frontend repository
-
-```bash
-git clone https://github.com/marinahbau/S-ADL-frontend.git
-cd S-ADL-frontend
-```
-
 ### Clone the API (backend) repository
 
 ```bash
-git clone https://github.com/marinahbau/S-ADL-API.git
+git clone https://github.com/ari-dasci/S-ADL-API.git
 ```
 
 ### Clone the S-ADL library
 
 ```bash
-git clone https://github.com/marinahbau/S-ADL.git
+git clone https://github.com/ari-dasci/S-ADL.git
 ```
 
 ### Install S-ADL library + API (conda environment)
@@ -156,10 +149,24 @@ The Angular app is preconfigured to send pipeline requests to `http://localhost:
 ## 🧪 Running a Pipeline
 
 1. Add nodes to the canvas.
+
+![Demo of canvas](./readme_assets/gif1_pipeline.gif)
+
 2. Configure their parameters.
+
+![Demo of parameters](./readme_assets/gif2_pipeline.gif)
+
 3. Click **"Run pipeline"**.
+
+![Demo of pipelines](./readme_assets/gif3_readme.gif)
+
 4. Visualizations will appear in modals.
+
+![Demo of plotly](./readme_assets/gif2_readme.gif)
+
 5. After execution, a message with a button will let you **export results as a **`.txt`** file**.
+
+![Demo of exporting](./readme_assets/gif4_readme.gif)
 
 ---
 
