@@ -87,7 +87,9 @@ export class ConfigComponentsComponent implements OnInit {
       // Dynamically add form controls based on itemSelectedParams
       for (const key in this.itemSelectedParams) {
         if (this.itemSelectedParams.hasOwnProperty(key)) {
-          this.formGeral.addControl(key, this.fb.control(this.itemSelectedParams[key]));
+          if (key != 'top_module') {
+            this.formGeral.addControl(key, this.fb.control(this.itemSelectedParams[key]));
+          }
         }
       }
     } else {
@@ -113,7 +115,9 @@ export class ConfigComponentsComponent implements OnInit {
         if (this.itemSelectedParams.hasOwnProperty(key)) {
           const value = this.itemSelectedParams[key];
 
-          this.formGeral.addControl(key, this.fb.control(value));
+          if (key != 'top_module') {
+            this.formGeral.addControl(key, this.fb.control(value));
+          }
         }
       }
 
