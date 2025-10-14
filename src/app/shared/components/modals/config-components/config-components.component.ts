@@ -1,0 +1,256 @@
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { TypeComponent } from '../../../models/components/type-component.enum';
+import { ComponentItem } from '../../../models/components/component-item';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { SharedDataService } from '../../../providers/sharedData.service';
+import { DataFilterService } from '../../../providers/data-filter.service';
+import { ApiService } from '../../../../core/services/api/app.api.service';
+
+declare module 'axios' {
+  interface AxiosRequestConfig {
+    customData?: any;
+  }
+}
+
+@Component({
+  selector: 'app-config-components',
+  templateUrl: './config-components.component.html',
+  styleUrls: ['./config-components.component.css']
+})
+export class ConfigComponentsComponent implements OnInit {
+
+  @Input() itemSelected: ComponentItem
+  inputList: HTMLElement;
+  @Output() itemOut = new EventEmitter<FormGroup>();
+
+  components = TypeComponent;
+  public formGeral: FormGroup;
+  itemSelectedParams: any;
+
+  // For each type of data, determine readonly flags and complex parameters to set manually
+  readonlyParamsTs: { [key: string]: boolean } = {
+    'algorithm_': true,
+    'loss': true,
+    'top_module': true,
+    'optimizer': true,
+    'input_shape': true,
+  };
+  complexParamsTs: { [key: string]: string } = {
+    'loss': 'torch.nn.MSELoss()',
+    'top_module': 'topModuleTSFEDL(in_features_topmodule, out_features_topmodule)',
+    'optimizer': 'None',
+    'input_shape': '(126,126)',
+  };
+
+  readonlyParamsStatic: { [key: string]: boolean } = {
+    'algorithm_': true
+  };
+  complexParamsStatic: { [key: string]: string } = {
+  };
+
+  readonlyParamsFederated: { [key: string]: boolean } = {
+    'algorithm_': true,
+    'input_dim': true,
+  };
+  complexParamsFederated: { [key: string]: string } = {
+    'input_dim': 'X.shape[1]',
+  };
+
+
+
+  constructor(private _apiservice: ApiService, public activeModal: NgbActiveModal, private fb: FormBuilder, private sharedDataService: SharedDataService, private dataFilterService: DataFilterService
+    , private elementRef: ElementRef) {
+    this.sharedDataService.getSelectedItemObservable().subscribe((item) => {
+      this.itemSelected = item;
+    });
+  }
+
+  ngOnInit() {
+
+    this.itemSelected = new ComponentItem(this.itemSelected);
+    JSON.stringify(this.itemSelected);
+
+    // Get parameters for the selected node, if avbailable in local storage
+    const nodeKey = `savedParams_${this.itemSelected.id}`;
+    const savedParams = localStorage.getItem(nodeKey);
+
+    if (savedParams) {
+      console.log('Saved Params from Local Storage:', savedParams);
+      this.itemSelectedParams = JSON.parse(savedParams);
+      console.log('Loaded Params from Local Storage:', this.itemSelectedParams);
+
+      // Initialize the form with the saved parameters
+      // Initialize formGeral
+      this.formGeral = this.fb.group({});
+
+      // Dynamically add form controls based on itemSelectedParams
+      for (const key in this.itemSelectedParams) {
+        if (this.itemSelectedParams.hasOwnProperty(key)) {
+          if (key != 'top_module') {
+            this.formGeral.addControl(key, this.fb.control(this.itemSelectedParams[key]));
+          }
+        }
+      }
+    } else {
+      console.log('No saved parameters found in local storage.');
+      this.buildForms();
+    }
+  }
+
+  updateParentForm(childFormValue: any) {
+    this.formGeral.patchValue(childFormValue);
+  }
+
+  buildForms() {
+    console.log('Fetching parameters for:', this.itemSelected);
+
+    this._apiservice.getParams(this.itemSelected.data.data.model, this.itemSelected.data.data.category).subscribe((data: any) => {
+      this.itemSelectedParams = data;
+      console.log(this.itemSelectedParams);
+
+      this.formGeral = this.fb.group({});
+
+      for (const key in this.itemSelectedParams) {
+        if (this.itemSelectedParams.hasOwnProperty(key)) {
+          const value = this.itemSelectedParams[key];
+
+          if (key != 'top_module') {
+            this.formGeral.addControl(key, this.fb.control(value));
+          }
+        }
+      }
+
+      // Save parameters to local storage with a node-specific key
+      const formData = this.formGeral.value;
+      const kwargs = { ...formData };
+      const nodeKey = `savedParams_${this.itemSelected.id}`;
+      localStorage.setItem(nodeKey, JSON.stringify(kwargs));
+
+    }, error => {
+      console.error('Error fetching parameters:', error);
+    });
+  }
+
+
+  public save_params() {
+
+    // Collect data from formGeral
+    const formData = this.formGeral.value;
+
+    const kwargs = { ...formData }; // Spread operator to copy formData into kwargs
+
+    //Flexanomalies algorithms are special cased
+    if (kwargs.algorithm_ == "isolationForest" || kwargs.algorithm_ == "pcaAnomaly" || kwargs.algorithm_ == "clusterAnomaly" || kwargs.algorithm_ == "deepCNN_LSTM") {
+      console.log('Flexanomalies algorithm detected');
+    }
+    else {
+      kwargs.algorithm_ = kwargs.algorithm_.toLowerCase();
+    }
+    for (const key in kwargs) {
+      kwargs[key] = this.inferAndCastValue(kwargs[key]);
+    }
+    console.log('Kwargs:', kwargs);
+
+    // Save parameters with the API
+    this._apiservice.setParams(kwargs, this.itemSelected.data.data.category).subscribe((data: any) => {
+
+      this.updateItem()
+      this.sharedDataService.updateSelectedItem(this.itemSelected);
+
+      // Save parameters to local storage with a node-specific key
+      const nodeKey = `savedParams_${this.itemSelected.id}`;
+      localStorage.setItem(nodeKey, JSON.stringify(kwargs));
+
+      // Show a confirmation alert
+      alert('Parameters saved successfully!');
+    }, error => {
+      console.log(error)
+      const errorMessage = error.detail || error.error?.detail || 'An unexpected error occurred.';
+      alert('Error fetching parameters: ' + errorMessage);
+    });
+  }
+
+
+  updateItem() {
+    // Itera sobre os controles do FormGroup
+    Object.keys(this.formGeral.controls).forEach(controlName => {
+      // Verifica se o campo correspondente existe em itemSelected
+      if (this.itemSelected.hasOwnProperty(controlName)) {
+        // Define o valor do controle no itemSelected
+        this.itemSelected[controlName] = this.tryParseJSON(this.formGeral.get(controlName)?.value);
+      }
+    });
+  }
+
+  private tryParseJSON(jsonString: string): any {
+    try {
+      return JSON.parse(jsonString);
+    } catch (error) {
+      return jsonString; // or handle the error as needed
+    }
+  }
+
+  public cancelar() {
+    this.activeModal.close(false);
+  }
+
+
+  toString(value: any,): string {
+    if (this.itemSelected.data.data.category == "time_series") {
+      if (Object.prototype.hasOwnProperty.call(this.complexParamsTs, value)) {
+        return this.complexParamsTs[value];
+      }
+    }
+    if (this.itemSelected.data.data.category == "static_data") {
+      if (Object.prototype.hasOwnProperty.call(this.complexParamsStatic, value)) {
+        return this.complexParamsStatic[value];
+      }
+
+    }
+    if (this.itemSelected.data.data.category == "federated_data") {
+      if (Object.prototype.hasOwnProperty.call(this.complexParamsFederated, value)) {
+        return this.complexParamsFederated[value];
+      }
+
+    }
+    return this.itemSelectedParams[value];
+  }
+
+  isReadonly(value: any): boolean {
+    if (this.itemSelected.data.data.category == "time_series") {
+      if (Object.prototype.hasOwnProperty.call(this.readonlyParamsTs, value)) {
+        return this.readonlyParamsTs[value];
+      }
+    }
+    if (this.itemSelected.data.data.category == "static_data") {
+      if (Object.prototype.hasOwnProperty.call(this.readonlyParamsStatic, value)) {
+        return this.readonlyParamsStatic[value];
+      }
+
+    }
+    if (this.itemSelected.data.data.category == "federated_data") {
+      if (Object.prototype.hasOwnProperty.call(this.readonlyParamsFederated, value)) {
+        return this.readonlyParamsFederated[value];
+      }
+
+    }
+    return false;
+  }
+
+  inferAndCastValue(value: any): any {
+    if (typeof value !== 'string') return value; // Already a number or boolean
+
+    const trimmed = value.trim();
+
+    // Check if it's a valid number
+    const num = Number(trimmed);
+    if (!isNaN(num)) {
+      // Preserve int if no decimal, otherwise float
+      return trimmed.includes('.') ? parseFloat(trimmed) : parseInt(trimmed, 10);
+    }
+
+    return value; // Keep as string
+  }
+
+}

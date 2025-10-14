@@ -1,0 +1,21 @@
+<nav>
+  <div class="nav nav-tabs" id="nav-tab" role="tablist">
+    <button class="nav-link active" id="nav-geral-tab" data-bs-toggle="tab" data-bs-target="#nav-geral" type="button"
+      role="tab" aria-controls="nav-geral" aria-selected="true">Parameters</button>
+    <!-- <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button"
+      role="tab" aria-controls="nav-profile" aria-selected="false">Html</button> -->
+      
+    <ng-container *ngFor="let component of components | keyvalue">
+      <button *ngIf="itemSelected.class === component.value && component.value !== components.StartFlow" class="nav-link" [attr.id]="'nav-'+component.key+'-tab'" data-bs-toggle="tab" [attr.data-bs-target]="'#' + component.key" type="button"
+      role="tab" [attr.aria-controls]="component.key" aria-selected="false">{{component.key}}</button>  
+    </ng-container>
+
+<!-- 
+    <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button"
+      role="tab" aria-controls="nav-contact" aria-selected="false">Code</button>     
+      <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button"
+      role="tab" aria-controls="nav-contact" aria-selected="false">Validate</button>
+      <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button"
+      role="tab" aria-controls="nav-contact" aria-selected="false">Http</button> -->
+  </div>
+</nav>

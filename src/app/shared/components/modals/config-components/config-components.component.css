@@ -1,0 +1,28 @@
+.readonly-input {
+  background-color: #f0f0f0;
+  /* muted text */
+  border-color: #ced4da;
+  cursor: not-allowed;
+  color: transparent;
+  text-shadow: 0 0 0 #000;
+  /* Optional: show the cursor position */
+  caret-color: transparent;
+  /* hide blinking cursor */
+}
+
+.form-control-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  padding: 0.375rem 0.75rem;
+  background-color: rgba(255, 255, 255, 0.6);
+  pointer-events: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 2.25rem;
+  /* adjust based on input height */
+  color: #555;
+}
