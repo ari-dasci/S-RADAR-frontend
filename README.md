@@ -1,8 +1,8 @@
-# S-ADL-frontend
+# RADAR-frontend
 
 This web application enables users to design and run custom data pipelines for anomaly detection, preprocessing, and visualization through a **node-based interface**. Each node represents an algorithm, transformation, or data source (API or scraper), and the results can be visualized, saved, or exported. 
 
-This is a visual interface designed to get to know [**S-ADL library**](https://github.com/ari-dasci/S-ADL), a Software Anomaly Detection Library that provides a modular collection of state-of-the-art algorithms for detecting anomalies in different types of data. S-ADL includes tools for preprocessing, visualization, and state-of-the-art algorithms for detecting anomalies in different types of data.
+This is a visual interface designed to get to know [**RADAR library**](https://github.com/ari-dasci/RADAR), a Software Anomaly Detection Library that provides a modular collection of state-of-the-art algorithms for detecting anomalies in different types of data. RADAR includes tools for preprocessing, visualization, and state-of-the-art algorithms for detecting anomalies in different types of data.
 
 The system is composed of a **frontend built with Angular** and a **backend REST API built with FastAPI**. The app supports dynamic pipeline execution and modular visualization.
 
@@ -35,7 +35,7 @@ The system is composed of a **frontend built with Angular** and a **backend REST
 - **Frontend**: Angular 17+, Bootstrap Modals, Plotly.js
 - **Backend**: FastAPI, Python 3.9+
 - **Communication**: REST API (JSON)
-- **Library**: S-ADL Software Anomaly Detection Library 
+- **Library**: RADAR Robust Anomaly Detection And Recognition  
 
 ---
 
@@ -44,8 +44,8 @@ The system is composed of a **frontend built with Angular** and a **backend REST
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/ari-dasci/S-ADL-frontend.git
-cd S-ADL-frontend
+git clone https://github.com/ari-dasci/RADAR-frontend.git
+cd RADAR-frontend
 ```
 
 ---
@@ -90,24 +90,24 @@ Then open your browser at: [http://localhost:4200](http://localhost:4200)
 ### Clone the API (backend) repository
 
 ```bash
-git clone https://github.com/ari-dasci/S-ADL-API.git
+git clone https://github.com/ari-dasci/RADAR-API.git
 ```
 
-### Clone the S-ADL library
+### Clone the RADAR library
 
 ```bash
-git clone https://github.com/ari-dasci/S-ADL.git
+git clone https://github.com/ari-dasci/RADAR.git
 ```
 
-### Install S-ADL library + API (conda environment)
+### Install RADAR library + API (conda environment)
 
 
 ```bash
-conda create --prefix ./envs/sadl-env python=3.10.18
+conda create --prefix ./envs/radar-env python=3.10.18
 
-conda activate ./envs/sadl-env 
+conda activate ./envs/radar-env 
 
-conda env update --prefix /mnt/homeGPU/mbautista/sadl-env --file sadl-env.yml --prune
+conda env update --prefix /path/to/env --file environment.yml --prune   # Replace /path/to/env with the location of your Conda environment.
 
 #Make sure Pytorch is installed now, if you have CUDA 11.8
 pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
@@ -122,10 +122,10 @@ pip install "fastapi[standard]"
 pip install "uvicorn[standard]"
 ```
 
-Export path to S-ADL library
+Export path to RADAR library
 
 ```bash
-export PYTHONPATH=«route_to_SADL»
+export PYTHONPATH=«route_to_RADAR»
 ```
 
 ### Run the FastAPI server
