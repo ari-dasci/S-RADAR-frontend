@@ -11,20 +11,20 @@ The system is composed of a **frontend built with Angular** and a **backend REST
 ## 🧱 Features & How to Use
 - 🧠 **Modular Node Editor**: Drag-and-drop interface to design custom pipelines (based on [**Drawflow**](https://github.com/jerosoler/Drawflow)).
   
-  ![Demo of node editor](./readme_assets/gif1_readme.gif)
+  ![Demo of node editor](./readme_assets/video1.gif)
 
 - 📈 **Interactive Visualizations**: Automatically display plots using Plotly.js.
 
-  ![Demo of plotly](./readme_assets/gif2_readme.gif)
+  ![Demo of plotly](./readme_assets/video2.gif)
 
 
 - 🧪 **Pipeline Execution**: Run full pipelines with a single button.
 
-  ![Demo of pipelines](./readme_assets/gif3_readme.gif)
+  ![Demo of pipelines](./readme_assets/video3.gif)
 
 - 🧾 **Export Results**: Save visualizations as `.txt` files after execution.
 
-  ![Demo of exporting](./readme_assets/gif4_readme.gif)
+  ![Demo of exporting](./readme_assets/video4.gif)
 
 - 📦 **Backend Algorithm Library**: Easily extend with new processing models.
 
@@ -150,23 +150,23 @@ The Angular app is preconfigured to send pipeline requests to `http://localhost:
 
 1. Add nodes to the canvas.
 
-![Demo of canvas](./readme_assets/gif1_pipeline.gif)
+![Demo of canvas](./readme_assets/video1.gif)
 
 2. Configure their parameters.
 
-![Demo of parameters](./readme_assets/gif2_pipeline.gif)
+![Demo of parameters](./readme_assets/videocompleto.gif)
 
 3. Click **"Run pipeline"**.
 
-![Demo of pipelines](./readme_assets/gif3_readme.gif)
+![Demo of pipelines](./readme_assets/video3.gif)
 
 4. Visualizations will appear in modals.
 
-![Demo of plotly](./readme_assets/gif2_readme.gif)
+![Demo of plotly](./readme_assets/video2.gif)
 
 5. After execution, a message with a button will let you **export results as a **`.txt`** file**.
 
-![Demo of exporting](./readme_assets/gif4_readme.gif)
+![Demo of exporting](./readme_assets/video4.gif)
 
 ---
 
