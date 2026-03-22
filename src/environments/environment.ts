@@ -4,6 +4,6 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'http://172.17.0.1:8000/api/gateway',
-  urlApi: 'http://172.17.0.1:8000',
+  apiUrl: 'http://127.0.0.1:8000/api/gateway',
+  urlApi: 'http://127.0.0.1:8000',
 };
